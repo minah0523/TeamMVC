@@ -150,6 +150,13 @@
 
 	$(document).ready(function(){
 		
+		$("#Main_Search_Input").keydown(function(key) {
+            //키의 코드가 13번일 경우 (13번은 엔터키)
+            if (key.keyCode == 13) {
+                goSearchProduct();
+            }
+        });
+		
 	});
 	
 	function manClick() {
