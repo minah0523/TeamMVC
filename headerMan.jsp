@@ -171,6 +171,14 @@
 		
 		});
 	}
+	
+	function goSearchProduct(){
+		
+		var gender = ${sessionScope.gender};
+		var keyword = $('#Main_Search_Input').val();
+		
+		location.href="<%= ctxPath %>/search/SearchPage.neige?pdgender="+gender+"&pdcategory_fk=0&searchname="+keyword;
+	}
 
 </script>
 
@@ -197,7 +205,7 @@
 			</div>
 			
 			<div class="col-md-3" id = "Gender_Category">
-				<input type="text" placeholder="&nbsp;&nbsp;Search " name="Main_Search_Input" id="Main_Search_Input" />
+				<input type="text" placeholder="&nbsp;&nbsp;Search " name="Main_Search_Input" id="Main_Search_Input" style="padding-left: 20px;" />
 				<button type="button" id="Main_Search_Button"
 						style =  "background-color: #515151; border: none; color:white;
 							      text-align: center; text-decoration: none; padding: 5px;
