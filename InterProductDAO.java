@@ -31,8 +31,8 @@ public interface InterProductDAO {
 	// 제품별 사이즈 리스트를 조회하는 메서드 (MINA)
 	List<String> selectProductSize(String pdno) throws SQLException;
 
-	// 페이징처리를 위해서 검색상품에 대한 총페이지 개수 알아오기(select) (MINA) 
-	int getTotalPage(Map<String, String> paraMap) throws SQLException;	
+	// 페이징처리를 위해서 전체회원에 대한 총 제품 개수와 페이지 개수 알아오기(select) (MINA)
+	Map<String, String> getTotal(Map<String, String> paraMap) throws SQLException;	
 	
 	
 	/*	
