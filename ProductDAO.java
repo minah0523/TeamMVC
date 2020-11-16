@@ -406,6 +406,8 @@ public class ProductDAO implements InterProductDAO {
 		////////////////////////////////////////////////////////////김민아//////////////////////////////////////////////////////////////////////
 		
 		
+		
+		
 	//search 페이지에 보여지는 상품이미지파일명을 모두 조회(select)하는 메소드 (MINA)
 	   @Override
 	   public List<ProductVO> searchProduct(Map<String, String> paraMap) throws SQLException {
@@ -655,15 +657,17 @@ public class ProductDAO implements InterProductDAO {
 	         return prodInfoList;
 	      }
 
-		// 페이징처리를 위해서 전체회원에 대한 총페이지 개수 알아오기(select) (Mina)
+		// 페이징처리를 위해서 전체회원에 대한 총 제품 개수와 페이지 개수 알아오기(select) (Mina)
 		@Override
-		public int getTotalPage(Map<String, String> paraMap) throws SQLException {
+		public Map<String, String> getTotal(Map<String, String> paraMap) throws SQLException {
+			
+			int totalSearchProduct = 0;
 			int totalPage = 0;
 		          
 			conn = ds.getConnection();
 			          
 	          // *** neige의 경우 1페이지당 아이템 16개씩 보여주기로 한다 *** //
-	          String sql = " select ceil( count(*)/ 16 ) ";
+	          String sql = " select count(*), ceil( count(*)/ 16 ) ";
 	          
 	          
 	          if( "1".equals(paraMap.get("pdgender")) || "2".equals(paraMap.get("pdgender"))) { // gender에 성별을 '여성(2)' '남성(1)' 입력했다면 
@@ -765,11 +769,14 @@ public class ProductDAO implements InterProductDAO {
 	          
 	          rs = pstmt.executeQuery();
 	          
-	          rs.next();       
+	          Map<String, String> totalMap = new HashMap<>();
 	          
-	          totalPage = rs.getInt(1);
+	          while(rs.next()){
+	        	  totalMap.put("totalSearchProduct", String.valueOf(rs.getInt(1)));
+	        	  totalMap.put("totalPage", String.valueOf(rs.getInt(2)));
+	          }     
              
-			return totalPage;		
+			return totalMap;		
 
 
 	} 
