@@ -86,7 +86,11 @@ public class SearchProductController extends AbstractController {
    			 */
    			
    			// 페이징처리를 위해서 검색상품에 대한 총페이지 개수 알아오기(select)  
-   			int totalPage = pdao.getTotalPage(paraMap);
+   			Map<String, String> totalMap = new HashMap<>();
+   			totalMap = pdao.getTotal(paraMap);
+   			
+   			int totalSearchProduct = Integer.parseInt(totalMap.get("totalSearchProduct"));
+   			int totalPage = Integer.parseInt(totalMap.get("totalPage"));
    			
    		//	System.out.println("~~~ 확인용 totalPage => " + totalPage);
    			
@@ -261,7 +265,7 @@ public class SearchProductController extends AbstractController {
       request.setAttribute("pdgender", pdgender);
       
       request.setAttribute("searchProductList", searchProductList); 
-      request.setAttribute("searchCount", searchProductList.size());
+      request.setAttribute("searchCount", totalSearchProduct);
       
       request.setAttribute("pdcategory_fk", pdcategory_fk);
       request.setAttribute("searchname", searchname);
