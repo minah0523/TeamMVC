@@ -13,17 +13,22 @@
 			font-size: 9pt;
 			line-height: 20px;
 		}
+		div.row#footerRow{
+			margin: 30px 0 0 0 ;
+			padding: 20px;
+		}
 		
-		ul {
+		div.row#footerRow > ul {
 			list-style-type: none;
+			 height: 150px;
 		}
 	</style>
 
 	<div id="footer">
-		<div class="row">
+		<div class="row" id="footerRow">
 			<ul>
 				<li class="col-md-5" style = " border-right-color: black; inline-block;">
-					<div style="border-right: solid 1px black; width: 100%; text-align: left; margin : 0 auto; height: 150px;">
+					<div style="border-right: solid 1px gray; width: 100%; text-align: left; margin : 0 auto; height: 150px;">
 						<div>
 							<span class="footer_title">ABOUT US</span>
 							<div class=" footer_contents">
@@ -52,7 +57,7 @@
 				</li>
 				 --%>	
 				<li class="col-md-3 " style = "display:inline-block;">
-					<div style="border-right: solid 1px black; width: 100%; text-align: left; margin : 0 auto; height: 150px;">
+					<div style="border-right: solid 1px gray; width: 100%; text-align: left; margin : 0 auto; height: 150px;">
 						<div>
 							<span class="footer_title">ACCOUNT INFORMATION</span>
 							<div class=" footer_contents">
