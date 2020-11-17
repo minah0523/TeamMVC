@@ -252,7 +252,7 @@
 				<a href="<%= ctxPath %>/member/myPage.neige">내정보 </a>  <span class= "delimiter">|</span>
 				<a href="<%= ctxPath %>/member/memberRegister.neige">회원가입 </a> <span class= "delimiter" >|</span>
 				<a href="<%= ctxPath %>/login/login.neige">로그인</a> <span class= "delimiter" >|</span>
-				<a href="<%= ctxPath %>/product/productRegister.neige">제품등록</a>
+				<a href="<%= ctxPath %>/admin/adminMain.neige">관리자</a>	
             </div>
             
 		</div>
