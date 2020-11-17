@@ -402,6 +402,43 @@ public class ProductDAO implements InterProductDAO {
 
 			return categoryProducClickList;
 		}
+	
+		// =========== 상품 등록 메소드 ============ // 
+		// tbl_prodcut에 상품을 등록하는(insert) 메소드
+		@Override
+		public int ProdutcRegisterAll(ProductVO product) throws SQLException {
+			// TODO Auto-generated method stub
+			
+			int result = 0;
+			
+			try {
+				
+				conn = ds.getConnection(); 
+				
+				String sql = " insert(pdno, pdname, pdcategory_fk, pdimage1, pdimage2, pdqty, price, saleprice, pdcontent, point, texture, pdgender) " 
+						   + " values(seq_product_pdno.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+				
+				
+				pstmt.setString(1, product.getPdname());
+				pstmt.setString(2, product.getPdcategory_fk()); // 암호를 SHA256 알고리즘으로 단방향 암호화 시킨다. (암호는 절대로 평문으로 만들면 안되니까 단일문 사용)
+				pstmt.setString(3, product.getPdimage1());
+				pstmt.setString(4, product.getPdimage2());  // 이메일을 AES256 알고리즘으로 양방향 암호화 시킨다. 
+				pstmt.setInt(5, product.getPdqty()); // 퓨대폰번호를 AES256 알고리즘으로 양방향 암호화 시킨다.
+				pstmt.setInt(6, product.getPrice());
+				pstmt.setInt(7, product.getSaleprice());			
+				pstmt.setString(8, product.getPdcontent());
+				pstmt.setInt(9, product.getPoint());
+				pstmt.setString(10, product.getTexture());
+				pstmt.setString(11, product.getPdgender());
+							
+				result = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}
+			
+			return result;
+		}		
 
 		////////////////////////////////////////////////////////////김민아//////////////////////////////////////////////////////////////////////
 		
