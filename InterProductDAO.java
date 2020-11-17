@@ -22,6 +22,10 @@ public interface InterProductDAO {
 	// 카테고리 목록 클릭시 카테고리 코드에 따라 조회 및 정렬하는 메소드  (JIEUN)
 	List<ProductVO> categoryProducClickSelectAll(Map<String, String> paraMap) throws SQLException;
 	
+	// ============= 상품 등록 하는 메소드  ==================== //
+	// tbl_prodcut에 상품을 등록하는(insert) 메소드(JIEUN)
+	int ProdutcRegisterAll(ProductVO product) throws SQLException;		
+	
 	// search페이지에 보여지는 상품이미지파일명을 모두 조회(select)하는 메소드 (MINA)
 	List<ProductVO> searchProduct(Map<String, String> paraMap) throws SQLException;
 
