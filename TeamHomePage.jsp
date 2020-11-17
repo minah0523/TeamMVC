@@ -86,6 +86,12 @@ String ctxPath = request.getContextPath();
      display: inline-block;
    }   
    
+   .productImgItem:hover {
+   		
+   		cursor: pointer;
+   		
+   }
+   
 </style>
 
 <jsp:include page="header.jsp" />
@@ -94,6 +100,8 @@ String ctxPath = request.getContextPath();
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		
+		$("span.pdNo").hide();
 		
 		// Top, Down 버튼 올렸을 때 CSS 지정
 		$("#goTopBtn").hover(function(){
@@ -143,8 +151,18 @@ String ctxPath = request.getContextPath();
 			location.href="<%= ctxPath%>/TeamHomePage.neige?sort="+sort;			
 				
 		});	
+		
+
+		// 각각의 이미지를 클릭 했을 경우 
+		$("img.productImgList").click(function(){
+			
+			var pdno = $(this).parent().parent().find(".pdNo").val();
+			alert("pdno ==========> ?" + pdno);
+			
+		});	
 
 	});
+	
 	
 </script>
 
@@ -248,31 +266,39 @@ String ctxPath = request.getContextPath();
 	<ul> 
 	  <c:forEach var="productMainImageVo" items="${productMainImageList}" varStatus="status" >
 		<li>
-			<div class = "col-md-3" style="margin-bottom: 50px;" >
+			<div class = "col-md-3 productItem" style="margin-bottom: 40px;" >
 				<div class = "productImg">
-					<img src = "<%= ctxPath %>/images2/${productMainImageVo.pdimage1}" /> 
+					<img class = "productImgItem" onclick="javascript:window.open('<%= ctxPath%>/ProductDetail.neige?pdno=${productMainImageVo.pdno}', '_self')" src = "<%= ctxPath %>/images2/${productMainImageVo.pdimage1}"/> <!--  onclick = "goProductDetail();"/> -->
 				</div>
 				<div class = "discription">
 					<ul>
 						<%-- 제품이름 --%>
-						<li><span class = "pName" style="font-weight: bold; font: ">${productMainImageVo.pdname}</span></li>
-						<li>
-						<c:if test="${productMainImageVo.price != productMainImageVo.saleprice }"> 
-								<span style = "text-decoration: line-through;">정상가 : ${productMainImageVo.price}원</span>
-						</c:if> <%-- 정상가와 세일가가 같지 않으면 정상가만 출력하고 같으면 판매가만 출력 --%>
-								<span>&nbsp;&nbsp;판매가 : ${productMainImageVo.saleprice}원</span>
-						</li>
+						<li><span class = "pName" style="font-weight: bold; font-size: 11.5pt">${productMainImageVo.pdname}</span></li>
 						<%-- 컬러 리스트 넣는 부분 (반복문) --%>
+						<li>
+					    <span style="font-weight: bold; font-size: 10pt;">COLOR : </span>
 						<c:forTokens var="item" items="${productMainImageVo.colores}" delims=",">
-                            <span>${item}</span>
+                            <span><%--${item} --%></span>
                             <span class="dot" style="background-color:${item}"></span>
 						</c:forTokens>
+						</li>
 						<%-- <li style = "display: inline-block;"><span>${productMainImageVo.colores}</span></li> --%>
 						<li>
-							<span>상품번호${productMainImageVo.pdno}</span>
-						</li>
+							<span style="font-weight: bold;">판매가 :  </span>
+								<c:if test="${productMainImageVo.price ne productMainImageVo.saleprice}">
+									<span style="font-size:11px; text-decoration:line-through;">${productMainImageVo.price} </span>
+							    </c:if>
+							    <span>&nbsp;&nbsp;${productMainImageVo.saleprice}원</span>
+                                <c:if test="${productMainImageVo.price ne productMainImageVo.saleprice}">
+                                	<span class="badge badge-pill badge-warning" style="font-size: 8pt; background-color:lightcoral">SALE</span>
+                                </c:if>									
+						</li>						
+						<li>
+							<span class="pdNo">${productMainImageVo.pdno}</span>
+						</li> 
 					</ul>
 				</div>
+			</div>
 		</li>
 	   </c:forEach>
 	</ul>
