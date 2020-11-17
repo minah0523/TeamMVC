@@ -143,19 +143,19 @@
 		alert("카테고리 => " + cate);
 		 
 		if(cate == "1") {
-			 $("li.1").css('background-color','red');
+			 $("li.1").css('background-color','#8A6C4F');
 		}
 		else if(cate == "2") {
-			 $("li.2").css('background-color','red');
+			 $("li.2").css('background-color','#8A6C4F');
 		}
 		else if(cate == "3") {
-			 $("li.3").css('background-color','red');
+			 $("li.3").css('background-color','#8A6C4F');
 		}
 		else if(cate == "4") {
-			 $("li.4").css('background-color','red');
+			 $("li.4").css('background-color','#8A6C4F');
 		}
 		else if(cate == "5") {
-			 $("li.5").css('background-color','red');
+			 $("li.5").css('background-color','#8A6C4F');
 		}	 
 		 
 		 
