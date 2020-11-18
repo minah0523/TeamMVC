@@ -65,25 +65,24 @@ public class ProductVO {
 			this.texture = texture;
 			this.pdgender = pdgender;
 		}
-	
+
+
 	// 상품(JIEUN)
 	public ProductVO(String pdname, String pdcategory_fk, String pdimage1, String pdimage2, int pdqty, int price,
-				int saleprice, String pdcontent, int point, String texture, String pdgender) {
-			super();
-			this.pdname = pdname;
-			this.pdcategory_fk = pdcategory_fk;
-			this.pdimage1 = pdimage1;
-			this.pdimage2 = pdimage2;
-			this.pdqty = pdqty;
-			this.price = price;
-			this.saleprice = saleprice;
-			this.pdcontent = pdcontent;
-			this.point = point;
-			this.texture = texture;
-			this.pdgender = pdgender;
-	}	 
-
-
+					int saleprice, String pdcontent, int point, String texture, String pdgender) {
+				super();
+				this.pdname = pdname;
+				this.pdcategory_fk = pdcategory_fk;
+				this.pdimage1 = pdimage1;
+				this.pdimage2 = pdimage2;
+				this.pdqty = pdqty;
+				this.price = price;
+				this.saleprice = saleprice;
+				this.pdcontent = pdcontent;
+				this.point = point;
+				this.texture = texture;
+				this.pdgender = pdgender;
+		}	
 	public int getPdno() {
 		return pdno;
 	}

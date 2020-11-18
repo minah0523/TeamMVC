@@ -64,8 +64,7 @@
 				}
 			 else {
 					// 이메일이 정규표현식에 맞는 경우
-				//	$(this).next().hide();
-				//  또는
+				 
 					$(this).parent().find(".error").hide();
 					$(":input").prop("disabled",false);
 			 }  
@@ -74,19 +73,18 @@
 		}); // 아이디가 email 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다.		
 		
 		
+		
 		$("#btnFind").click(function(){
-			
-			// 성명 및 e메일에 대한 유효성 검사(정규표현식)는 생략하겠습니다. 
-			
 			
 			
 			var frm = document.idFindFrm;
 			frm.action = "<%=ctxPath%>/login/idFind.neige";
 			frm.method = "POST";
 			frm.submit();
-		});
+		});//end of $("#btnFind").click(function(){}
 		
-	});
+		
+	});//end of $(document).ready(function(){}
 	
 </script>
 
@@ -102,9 +100,21 @@ div.titleArea {
 	letter-spacing: 4px;
 }
 
+div.titleArea2{
+      margin: 50px 0 50px;
+      
+       padding: 15px font-size: 5pt;
+       margin: 30px;
+       height: 30px;
+      
+       letter-spacing: 4px;
+   }
+
 fieldset {
+
+
 	width: 55%;
-	margin: 50px;
+	margin: 100px;
 	padding: 0 47px;
 }
 
@@ -114,24 +124,9 @@ div.item {
 	line-height: 20px;
 }
 
-/* #div_name {
-	width: 70%;
-	height: 15%;
-	margin-bottom: 5%;
-	margin-left: 10%;
-	position: relative;
-}
-
-#div_email {
-	width: 70%;
-	height: 15%;
-	margin-bottom: 5%;
-	margin-left: 10%;
-	position: relative;
-} */
 
 #div_findResult {
-	width: 70%;
+	width: 100%;
 	height: 15%;
 	margin-bottom: 5%;
 	margin-left: 10%;
@@ -140,29 +135,29 @@ div.item {
 
 div#div_btnFind{
 
-margin:20px;
+	margin:20px;
 
 }
 
 
- div#input{
-   		width: 40%;
-   		 
-   }
-   
+div#input{
+	width: 40%;
+  		 
+  }
   
+ 
+  
+  label#name{
+	float: left;
+	width: 20px;
+	  }
    
-   label#name{
-   		float: left;
-   		width: 20px;
-   }
-    
-   label#Email{
-   		float: left;
-   		width: 20px;
-   
-   }
-   
+  label#Email{
+	float: left;				
+	width: 20px;	
+	  
+  }
+  
  
 </style>
 <body>
@@ -172,8 +167,10 @@ margin:20px;
 		<div class="titleArea">ID Search</div>
 			<div class="item">
 				<div class="category">
-				 
-			
+				 <div class="form-group">
+		<div style="font-size: 5px; color: gray;" class="titleArea2">
+                 이름과 email을 입력하세요.</div>
+                     
 				<div id ="input">	
 				
 				<div id="div_name" style="margin-bottom:10px;"> 
@@ -195,10 +192,11 @@ margin:20px;
 
 				<div id="div_btnFind" align="center">
 					<button type="button" class="btn btn-success" id="btnFind"
-					style="width: 100%; border-top: hidden; background-color: #6E6E6E; color: white; border-bottom: hidden; border-left: hidden; padding: 10px; vertical-align: middle; border: none;"
+					style="width: 30%; border-top: hidden; background-color: #6E6E6E; color: white; border-bottom: hidden; border-left: hidden; padding: 10px; vertical-align: middle; border: none;"
 					>Search</button>
 					
 					 
+						</div>
 					</div>
 				</div>
 			</div>

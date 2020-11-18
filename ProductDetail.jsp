@@ -10,182 +10,283 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
+    <link rel="stylesheet" type="text/css" href="css/style_1.css">
+    <link rel="stylesheet" type="text/css" href="css/smoothproducts.css">
 
-<link rel="stylesheet" type="text/css" href="css/teststyle.css">
-<link rel="stylesheet" type="text/css" href="css/smoothproducts.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            //            var goPdnoPage = $("Pdno").val();
+            //
+            //            if (product != null) {
+            //                PdnoPage.focus();
+            //                return;
+            //            }
+
+            //                    $("button#addcart").click(function() {
+            //                            goCart = $("pdno").val();
+            //
+            //
+            //                            console.log($ {
+            //                                "#pcolor_1"
+            //                            }.val());
+            //
+            //                            if (product != n)
+            //
+            //                        }
+
+            //            var scartno = "001,002,003,004,005,006,007,008,009,010";
+            //            var arrcartno = [];
+            //            arrcartno = scartno.split(',');
+            //            console.log(scartno);
+            //            console.log(arrcartno);
+
+            //var total_amount = 0;
+            // name 으로 값 가져오기
+            //  var name = "";
+            //$('input[name=inputName]').val();
+            // $('input[name=inputBTN]').click(function() {
+
+            //alert("1235678");
+
+            //  name = $(this).text();
+            //  console.log(name);
+            //
+            //total_amount += Number($(this).val());
+            // });
+
+            // var c1 = $("#productcolor option:selected").text();
+            // console.log(c1);
+
+            // var c2 = $("select[name='productcolor']").val();
+            //console.log("c2 : " + c2)
+
+            // console.log("A2 : " + $("select[name=productcolor]:selected").val());
+            var color = "";
+
+            $("select[name='productcolor']").click(function() {
+                color = $("select[name='productcolor']").val();
+                console.log(color);
+            });
+
+
+
+            //  console.log("total_amount : " + total_amount);
+
+            //            $("button#cardSlash").click(function() {
+            //                goCardSlashEnd('${sessionScope.loginuser.userno}', total_amount);
+            //            });
+
+
+        });
+
+        function goPdnoPage(pdno) {
+            var frm = document.PdnoFrm;
+            frm.pdnopage.value = pdnopage;
+
+            frm.action = "<%=request.getContextPath()%>/member/ProductDetail_1.neige";
+            frm.method = "POST";
+            frm.submit();
+        };
+
+        function goPayLogInsert(userno, total_amount) {
+
+            var frm = document.payLogInsert;
+            frm.userno.value = userno;
+            frm.total_amount.value = total_amount;
+
+            frm.action = "<%=request.getContextPath()%>/payment/cardSlashUpdate.up";
+            frm.method = "POST";
+            frm.submit();
+        }
+
+    </script>
+    <meta charset="UTF-8">
+    <title>:: 상품상세정보 ::</title>
 </head>
+
 <body>
-	<!-- Jquery V.3.3.1 -->
+    <jsp:include page="/WEB-INF/header.jsp" />
 
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/smoothproducts.min.js"></script>
-	<script type="text/javascript">
-	
-		$(function() {
+    <div class="product-detail">
 
-			$(".otherInfoBody").hide();
-			$(".otherInfoHandle").click(function() {
-				$(".otherInfoBody").slideToggle();
-			});
-			$(".closeBtn").click(function() {
-				$("body").css("overflow", "visible");
-				$(".loginBox").slideUp();
-			});
-			$(".productViewBtn").click(function(e) {
-				e.preventDefault();
-				$("body").css("overflow", "hidden");
-				$(".productViewBox").slideDown();
-			});
-			$(".productViewBox-closeBtn").click(function() {
-				$("body").css("overflow", "visible");
-				$(".productViewBox").slideUp();
-			});
-			$(".sp-wrap").smoothproducts();
-		});
-	</script>
+        <div class="product-detail-left">
+            <c:forEach var="pdvo" items="${productList}" varStatus="status">
+                <c:if test="${ status.index == 0 }">
 
-	<jsp:include page="/WEB-INF/header.jsp" />
+                    <!--  <li data-target="#ProductDetail_info"></li>-->
 
-<div class ="product-detail">
-	<div class="container">
-		<div class="product-detail-left">
-		<div  class="sp-wrap">
-		<c:forEach var="pdvo" items="${ productList }" varStatus="status">
-			 
-			<c:if test="${ status.index == 0 }">
-				
-					<!--  <li data-target="#ProductDetail_info"></li>-->
+                    <div class="ProductDetail-left">
 
-				<div class="ProductDetail_left" >
-					
-					<img src="<%= ctxPath%>/images/${ pdvo.pdimage1 }"
-						style="width: 500px; height: 500px; float: left; max-width: inherit;" >
-						
-					<img src="<%= ctxPath%>/images/${ pdvo.pdimage2 }"
-						style="width: 100px; height: 100px; float: left; max-width: inherit;" >
-				</div>
-			</c:if>
-		</c:forEach>
-		</div>
-		</div>
-	</div>
-</div>
+                        <img src="<%= ctxPath%>/images/${pdvo.pdimage1}" style="width: 650px; height: 550px; float: left;"> <img src="<%= ctxPath%>/images/${pdvo.pdimage2 }" style="width: 100px; height: 100px; float: left; padding max-width: inherit;">
+
+                    </div>
+                </c:if>
+                <br>
+            </c:forEach>
+        </div>
 
 
+        <div class="container">
+            <div class="product-detail-right">
+                <!-- product-detail option -->
+                <c:forEach var="pdvo" items="${productList}" varStatus="status">
+                    <h3>
+                        <c:out value="${pdvo.pdname}" />
+                        <!-- 제품명 pdname -->
 
-	<!-- Product Detail Page Start -->
-	<div class="product-detail">
-		<div class="container">
-			<div class="product-detail-left">
-				<div class="sp-wrap">
-					<a href="/images/1_1.jpg"> <img src="/images/1_2.jpg" alt=""></a>
-				</div>
-			</div>
+                        <br> <small>Product No.
+                            <c:out value="${pdvo.pdno}" />
+                        </small>
+                        <!-- 제품번호 pdno -->
+                    </h3>
+                    <h5>
+                        <b>가격 : </b> &#8361;
+                        <c:out value="${pdvo.price}" />
+                        <br> <br> <b>재질: </b>
+                        <c:out value="${pdvo.texture}" />
+                    </h5>
+                </c:forEach>
+                <%--
+	<select name="pdno_fk" class="colordata">
+				<option value="">:::선택하세요:::</option>
+				 
+					//<option value="1">색상1</option>
+					//<option value="2">색상2</option>
+					//<option value="3">색상3</option>
+				 
+				<c:forEach var="color" items="${requestScope.productinfoList}">
+					<option name="pcolor_1" value="${color.pdno}">${color.pcolor}</option>
+				</c:forEach>
+			</select> 
+--%>
+
+                <h5>
+                    <b>색상 : </b>
+                    <select name="productcolor" class="productData">
+                        <option name="colorbtn" value="colortag">Color</option>
+
+                        <c:forEach var="pdinfo" items="${requestScope.productinfoList}">
+                            <option value="${pdinfo.pcolor}">${pdinfo.pcolor}</option>
+                        </c:forEach>
+
+                    </select>
+                    <br> <br>
+
+                    <b>사이즈 : </b>
+
+                    <select name="productSize" class="productData">
+                        <%--<c:forEach var="pdSize" items="${requestScope.productinfoList}" value="${pdSize.psize}"> --%>
+                            <c:set var="pdSize" value="${pdSize.psize}" />
+
+                            <c:if test="${pdSize eq 'FREE'}">
+                                <option value="${pdSize.psize}">FREE</option>
+                            </c:if>
+                            <c:if test="${pdSize eq '${pdSize.psize}'}">
+                                <option value="${pdSize.psize}">${pdSize.psize}</option>
+                            </c:if>
+
+                            <!--<c:if test="${pdSize.psize} == 'FREE'}">
+                                <option value="${pdSize.psize}">FREE</option>
+                            </c:if>
+
+                            <c:if test="${pdSize.psize} != 'FREE'}">
+                                <option value="${pdSize.psize}">${pdSize.psize}</option>
+                            </c:if>-->
 
 
-			<div class="product-detail-right">
-				<h3>
-					wappen_zip_up_hoodie <br> <small>Code : ABC0001</small>
-				</h3>
-				<h5>
-					<b>가격 : </b> &#8361; 54,321
-				</h5>
-				<h5>
-					<b>브랜드: </b> Mark Gonzales
-				</h5>
-				<h5>
-					<b>색상 : </b> BLACK
-				</h5>
-				<h5>
-					<b>배송비 : </b> 무료
-				</h5>
-				<h5>
-					<b>사이즈 : </b> S/M/L/XL
-				</h5>
-				<h5>
-					<b>구매가능여부 : </b> 가능
-				</h5>
-				<a href="#" class="addtocart"><i class="fas fa-heart"></i> 장바구니</a>
+
+
+                        <%-- </c:forEach> --%>
+                    </select>
+
+                </h5>
+                <h5>
+
+                    <b>배송비 : </b> FREE
+                    <b>
+                        <ul style="list-style-type: none; margin-top: 50px;">
+                            <li style="margin-bottom: 40px;">
+                                <label for="spinner">수량:</label>
+                                <input id="spinner" name="oqty" value="1" style="width: 30px; height: 20px;">
+                            </li>
+                        </ul>
+                    </b>
+                </h5>
+
+                <button type="button" id="addcart" onclick="location.href='<%=ctxPath%>/Payment/productCart.neige'" class="addtocart">
+                    <i id="cart" class="fas fa-heart"></i>장바구니
+                </button>
+                <button type="button" id="review" onclick="location.href='<%=ctxPath%>/productdetail/productReview.jsp'" class="writereview">
+                    <i class="fas fa-pen"></i>리뷰
+                </button>
+                <br>
+                <button type="button" id="buy" onclick="location.href='<%=ctxPath%>/Payment/productCart.neige'" class="buynow">
+                    <i class="fas fa-shopping-cart"></i>구매하기
+                </button>
+                <!-- <a href="#" class="addtocart"><i id="cart" class="fas fa-heart"></i> 장바구니</a>
 				<a href="#" class="writereview"><i class="fas fa-pen"></i> 리뷰작성</a>
-				<br> <a href="#" class="buynow"><i class="fas fa-shopping-cart"></i> 구매하기</a>
-			</div>
-
-			<div class="product-detail-feature">
-				<h3>상품상세정보</h3>
-				<p>브랜드 : Mark Gonzales</p>
-				<p>사이즈 : FREE</p>
-				<p>색상 : Black, Gray</p>
-				<p>남녀공용</p>
-				<a href="/images/53_1.jpg"> 
-				<img src="/images/53_2.jpg" alt=""></a>
-			</div>
-
-		</div>
-	</div>
-	<!-- Product Detail Page End -->
+				<br> <a href="#" class="buynow"><i class="fas fa-shopping-cart"></i> 구매하기</a> -->
+            </div>
+            <!-- product-detail option end -->
 
 
-	<!-- Product View Box / Quick Product View Start -->
-	<div class="productViewBox">
-		<h3>wappen_zip_up_hoodie</h3>
-		<div class="productViewBox-closeBtn">
-			<i class="fas fa-times"></i>
-		</div>
-		<div class="productViewBoxImg">
-			<img src="images/5.jpg">
-		</div>
-		<div class="productViewBoxDetail">
-			<h5>
-				<b>제품코드 : </b> GA000006488
-			</h5>
-			<h5>
-				<b>가격 : </b> <i class="fas fa-dollar-sign"></i> 598
-			</h5>
-			<h5>
-				<b>브랜드 : </b> Mark Gonzales
-			</h5>
-			<h5>
-				<b>배송비 : </b> Free
-			</h5>
-			<h5>
-				<b>구매가능여부 : </b> 가능
-			</h5>
-			<a href="#" class="addtocart"><i class="fas fa-heart"></i> 장바구니</a> 
-			<a href="#" class="writereview"><i class="fas fa-pen"></i> 리뷰작성</a> 
-			<a href="#" class="buynow"><i class="fas fa-shopping-cart"></i>
-				결제하기</a>
-		</div>
-	</div>
-	<!-- Product View Box / Quick Product View End -->
+            <div class="product-detail-feature">
+                <c:forEach var="pdvo" items="${productList}" varStatus="status">
+                    <h3>상품상세정보</h3>
+                    <c:forEach var="pdinfo" items="${requestScope.productinfoList}">
+                        <p>
+                            색상 :
+                            <c:out value="${pdinfo.pcolor}" />
+                        </p>
+                        <p>
+                            사이즈 :
+                            <c:out value="${pdinfo.psize}" />
+                        </p>
+                    </c:forEach>
+                    <p>
+                        재질 :
+                        <c:out value="${pdvo.texture}" />
+                    </p>
+                    <p>
+                        적립 포인트 :
+                        <c:out value="${pdvo.point}" />
+                    </p>
+                    <br>
+                    <br>
+                    <h4>
+                        <c:out value="${pdvo.pdcontent}" />
+                    </h4>
+                    <br>
+                    <br>
+                    <a href="<%=ctxPath%>/images/56_3.jpg"> <img src="<%=ctxPath%>/images/56_3.jpg" alt=""></a>
+                    <img src="<%= ctxPath%>/images/${pdvo.pdimage1}" style="width: 100%;">
+                    <img src="<%= ctxPath%>/images/${pdvo.pdimage2}" style="width: 100%;">
+                </c:forEach>
+            </div>
+        </div>
+        <!-- container -->
 
-	<!-- Page Center Bar -->
-	<div class="pagecenterbar">
-		<div class="container">
-			<h3>Page Center Bar</h3>
-			<div class="pagecenterbarInner">
-				<a href="#">상품구매</a> <a href="#">리뷰</a> <a href="#">좋아요</a>
-			</div>
-		</div>
-	</div>
-	<!-- Page Center Bar -->
+    </div>
+    <!-- product detail -->
 
-	<!-- Other Information start -->
-	<div class="otherInfo">
-		<div class="container">
-			<h3 class="otherInfoHandle">상세 정보 더보기</h3>
-			<div class="otherInfoBody">
-				<p>상세정보글1</p>
-				<p>상세정보글2</p>
-				<p>상세정보글3</p>
-			</div>
-		</div>
-	</div>
-	<!-- Other Information end -->
+
+    <form name="PdnoForm">
+
+        <input type="hidden" name="size" value="" />
+        <input type="hidden" name="color" value="" />
+        <input type="hidden" name="qty" value="" />
+        <input type="button" name="inputBTN" value="A!S@#D#F" />
+
+    </form>
 
 </body>
-</html>
 
+</html>
 
 <jsp:include page="/WEB-INF/footer.jsp" />

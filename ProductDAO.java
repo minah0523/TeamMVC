@@ -15,7 +15,6 @@ public class ProductDAO implements InterProductDAO {
 	private PreparedStatement pstmt;
 	private ResultSet rs;
 
-	// 기본 생성자
 	public ProductDAO() {
 		try {
 			Context initContext = new InitialContext();
@@ -402,9 +401,36 @@ public class ProductDAO implements InterProductDAO {
 
 			return categoryProducClickList;
 		}
-	
-		// =========== 상품 등록 메소드 ============ // 
-		// tbl_prodcut에 상품을 등록하는(insert) 메소드
+		
+		
+		
+		// =========== 상품 관련 메소드 ============ // 
+		
+		// 제품번호 채번해오는 메소드(JIEUN)
+		@Override
+		public int getPnumOfProduct() throws SQLException {
+			int pdno = 0;
+			
+			try {
+				 conn = ds.getConnection();
+				 
+				 String sql = " select  seq_product_pdno.nextval as pdno " +
+						      " from dual ";
+						   
+				 pstmt = conn.prepareStatement(sql);
+				 rs = pstmt.executeQuery();
+				 			 
+				 rs.next();
+				 pdno = rs.getInt(1);
+			
+			} finally {
+				close();
+			}
+			
+			return pdno;
+		}	
+		
+		// tbl_prodcut에 상품을 등록하는(insert) 메소드(JIEUN)
 		@Override
 		public int ProdutcRegisterAll(ProductVO product) throws SQLException {
 			// TODO Auto-generated method stub
@@ -415,21 +441,23 @@ public class ProductDAO implements InterProductDAO {
 				
 				conn = ds.getConnection(); 
 				
-				String sql = " insert(pdno, pdname, pdcategory_fk, pdimage1, pdimage2, pdqty, price, saleprice, pdcontent, point, texture, pdgender) " 
-						   + " values(seq_product_pdno.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+				String sql = " insert into tbl_product(pdno, pdname, pdcategory_fk, pdimage1, pdimage2, pdqty, price, saleprice, pdcontent, point, texture, pdgender) " 
+						   + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 				
+				pstmt = conn.prepareStatement(sql);
 				
-				pstmt.setString(1, product.getPdname());
-				pstmt.setString(2, product.getPdcategory_fk()); // 암호를 SHA256 알고리즘으로 단방향 암호화 시킨다. (암호는 절대로 평문으로 만들면 안되니까 단일문 사용)
-				pstmt.setString(3, product.getPdimage1());
-				pstmt.setString(4, product.getPdimage2());  // 이메일을 AES256 알고리즘으로 양방향 암호화 시킨다. 
-				pstmt.setInt(5, product.getPdqty()); // 퓨대폰번호를 AES256 알고리즘으로 양방향 암호화 시킨다.
-				pstmt.setInt(6, product.getPrice());
-				pstmt.setInt(7, product.getSaleprice());			
-				pstmt.setString(8, product.getPdcontent());
-				pstmt.setInt(9, product.getPoint());
-				pstmt.setString(10, product.getTexture());
-				pstmt.setString(11, product.getPdgender());
+				pstmt.setInt(1, product.getPdno());
+				pstmt.setString(2, product.getPdname());
+				pstmt.setString(3, product.getPdcategory_fk()); // 암호를 SHA256 알고리즘으로 단방향 암호화 시킨다. (암호는 절대로 평문으로 만들면 안되니까 단일문 사용)
+				pstmt.setString(4, product.getPdimage1());
+				pstmt.setString(5, product.getPdimage2());  // 이메일을 AES256 알고리즘으로 양방향 암호화 시킨다. 
+				pstmt.setInt(6, product.getPdqty()); // 퓨대폰번호를 AES256 알고리즘으로 양방향 암호화 시킨다.
+				pstmt.setInt(7, product.getPrice());
+				pstmt.setInt(8, product.getSaleprice());			
+				pstmt.setString(9, product.getPdcontent());
+				pstmt.setInt(10, product.getPoint());
+				pstmt.setString(11, product.getTexture());
+				pstmt.setString(12, product.getPdgender());
 							
 				result = pstmt.executeUpdate();
 				
@@ -438,11 +466,74 @@ public class ProductDAO implements InterProductDAO {
 			}
 			
 			return result;
-		}		
+		}
+			
+			
+		// 추가 이미지 파일 insert하는 메서드(JIEUN)
+		@Override
+		public int product_imagefile_Insert(int pdno, String plusPdimage) throws SQLException {
+			
+			int imgfile = 0;
+			
+			try {
+				conn = ds.getConnection();
+				
+				String sql = " insert into tbl_product_imagefile(imgfileno, pdno_fk, imgfilename) "+ 
+						     " values(seq_product_imagefile_imgno.nextval, ?, ?) ";
+				
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setInt(1, pdno);
+				pstmt.setString(2, plusPdimage);
+				
+				imgfile = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}
+			
+			return imgfile;
+			
+		}
+			
+		// 색상과 사이즈를 insert하는 메소드(JIEUN)
+		@Override
+		public int product_info_insert(Map<String, Object> paraMap) throws SQLException {
+			
+			int productInfo = 0;
+			
+			try {
+				
+				conn = ds.getConnection(); 
+				
+
+				String sql = " insert into tbl_product_info(pinfono, pdno_fk, pcolor, psize) " + 
+					     " values(seq_product_info_pinfono.nextval, ?, ?, ? ) ";
+			
+				pstmt = conn.prepareStatement(sql);			
+				
+				/*
+				for(int i=0; i<pcolors.length; i++) {
+				}
+				*/ 
+				
+				pstmt.setInt(1, Integer.parseInt((String) paraMap.get("pdno")));
+				pstmt.setString(2, paraMap.get("pcolors").toString());
+				pstmt.setString(3, paraMap.get("psizes").toString());
+				
+				productInfo = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}		
+			
+			System.out.println("색상과 사이즈 테이블 insert하는 부분 결과가 뭐가 나올까??? ==> " + productInfo);
+			
+			return productInfo;
+		}
+
 
 		////////////////////////////////////////////////////////////김민아//////////////////////////////////////////////////////////////////////
-		
-		
 		
 		
 	//search 페이지에 보여지는 상품이미지파일명을 모두 조회(select)하는 메소드 (MINA)
@@ -820,193 +911,189 @@ public class ProductDAO implements InterProductDAO {
 		
 		
 		
-	/////////////////////////////////////////////////////////////////////////////홍승의/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////홍승의/////////////////////////////////////////////////////////////////////////////////
 		
 		/*
 		// 물품 상세정보( DTO객체 / VO객체를 가져온다) primary key > pdno (승의)
 		@Override
 		public List<ProductVO> ProductList() throws SQLException {
-
-			List<ProductVO> productList = new ArrayList<>();
-			try {
-				conn = ds.getConnection();
-
-				String sql = " SELECT pdno, pdname, pdcategory_fk, pdimage1, pdimage2, pdqty, price, saleprice, pdcontent, point, texture FROM tbl_product WHERE pdno = 1 ORDER BY pdno ASC ";
-
-				pstmt = conn.prepareStatement(sql);
-
-				rs = pstmt.executeQuery();
-
-				while (rs.next()) {
-
-					// System.out.println("DAO-Checked");
-					ProductVO pdvo = new ProductVO();
-
-					pdvo.setPdno(rs.getInt(1));
-					pdvo.setPdname(rs.getString(2));
-					pdvo.setPdcategory_fk(rs.getInt(3));
-					pdvo.setPdimage1(rs.getString(4));
-					pdvo.setPdimage2(rs.getString(5));
-					pdvo.setPdqty(rs.getInt(6));
-					pdvo.setPrice(rs.getInt(7));
-					pdvo.setSaleprice(rs.getInt(8));
-					pdvo.setPdcontent(rs.getString(9));
-					pdvo.setPoint(rs.getInt(10));
-					pdvo.setTexture(rs.getString(11));
-
-					productList.add(pdvo);
-
-					// System.out.println(pdvo.getPdname());
-
-				} // end of while------------------------------------
-
-			} finally {
-				close();
-			}
-
-			return productList;
-
+		
+		List<ProductVO> productList = new ArrayList<>();
+		try {
+		conn = ds.getConnection();
+		
+		String sql = " SELECT pdno, pdname, pdcategory_fk, pdimage1, pdimage2, pdqty, price, saleprice, pdcontent, point, texture FROM tbl_product WHERE pdno = 1 ORDER BY pdno ASC ";
+		
+		pstmt = conn.prepareStatement(sql);
+		
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+		
+		// System.out.println("DAO-Checked");
+		ProductVO pdvo = new ProductVO();
+		
+		pdvo.setPdno(rs.getInt(1));
+		pdvo.setPdname(rs.getString(2));
+		pdvo.setPdcategory_fk(rs.getInt(3));
+		pdvo.setPdimage1(rs.getString(4));
+		pdvo.setPdimage2(rs.getString(5));
+		pdvo.setPdqty(rs.getInt(6));
+		pdvo.setPrice(rs.getInt(7));
+		pdvo.setSaleprice(rs.getInt(8));
+		pdvo.setPdcontent(rs.getString(9));
+		pdvo.setPoint(rs.getInt(10));
+		pdvo.setTexture(rs.getString(11));
+		
+		productList.add(pdvo);
+		
+		// System.out.println(pdvo.getPdname());
+		
+		} // end of while------------------------------------
+		
+		} finally {
+		close();
 		}
-	*/
+		
+		return productList;
+		
+		}
+		*/
 		// 물품 상세정보 pdno key 값의 정보를 불러온다. (승의)
 		@Override
-		public List<ProductVO> ProductList(int pdno) throws SQLException {
-
-			List<ProductVO> productList = new ArrayList<>();
-			try {
-				conn = ds.getConnection();
-
-				String sql = "SELECT PDINFO.PDNO_FK AS PDNO, PDNAME, PDCATEGORY_FK, PDIMAGE1, PDIMAGE2, PDQTY, PRICE, SALEPRICE, PDCONTENT, POINT, TEXTURE, PINFONO, PCOLOR, PSIZE \n"+
-						"FROM \n"+
-						"(\n"+
-						"SELECT PDNO, PDNAME, PDCATEGORY_FK, PDIMAGE1, PDIMAGE2, PDQTY, PRICE, SALEPRICE, PDCONTENT, POINT, TEXTURE \n"+
-						"FROM TBL_PRODUCT \n"+
-						"ORDER BY PDNO \n"+
-						") PD\n"+
-						" JOIN \n"+
-						"(\n"+
-						"SELECT PINFONO, PDNO_FK , PCOLOR, PSIZE \n"+
-						"FROM TBL_PRODUCT_INFO \n"+
-						") PDINFO \n"+
-						"ON PD.PDNO = PDINFO.PDNO_FK\n"+
-						"WHERE PDNO = ? \n"+
-						"ORDER BY PDNO ASC ";
-
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setInt(1, pdno);
-				
-				rs = pstmt.executeQuery();
-				
-				while (rs.next()) {
-
-					// System.out.println("DAO-Checked");
-					ProductVO pdvo = new ProductVO();
-
-					pdvo.setPdno(rs.getInt(1));
-					pdvo.setPdname(rs.getString(2));
-					pdvo.setPdcategory_fk(rs.getString(3));
-					pdvo.setPdimage1(rs.getString(4));
-					pdvo.setPdimage2(rs.getString(5));
-					pdvo.setPdqty(rs.getInt(6));
-					pdvo.setPrice(rs.getInt(7));
-					pdvo.setSaleprice(rs.getInt(8));
-					pdvo.setPdcontent(rs.getString(9));
-					pdvo.setPoint(rs.getInt(10));
-					pdvo.setTexture(rs.getString(11));
-					productList.add(pdvo);
-					
-									
-
-					// System.out.println(pdvo.getPdname());
-
-				} // end of while------------------------------------
-
-			} finally {
-				close();
-			}
-
-			return productList;
-
-		}
-
-		/*
-		 * // 물품상세페이지에서 장바구니 (승의)
-		 * 
-		 * @Override public List<CartVO> CartList() throws SQLException {
-		 * 
-		 * List<CartVO> cartList = new ArrayList<>(); try { conn = ds.getConnection();
-		 * 
-		 * String sql = " SELECT CARTNO, USERID_FK, PDNO_FK, PQTY, REGISTERDAY "+
-		 * "FROM TBL_CART "+ "FROM TBL_CART "+ "WHERE pdno = ? ORDER BY CARTNO ASC ";
-		 * 
-		 * pstmt = conn.prepareStatement(sql);
-		 * 
-		 * rs = pstmt.executeQuery();
-		 * 
-		 * while (rs.next()) {
-		 * 
-		 * // System.out.println("DAO-Checked"); CartVO cvo = new CartVO();
-		 * 
-		 * cvo.setCartno(rs.getInt(1)); cvo.setUserid_fk(rs.getString(2));
-		 * cvo.setPdno_fk(rs.getInt(3)); cvo.setPqty(rs.getInt(4));
-		 * cvo.setRegisterday(rs.getString(5));
-		 * 
-		 * 
-		 * cartList.add(cvo);
-		 * 
-		 * } // end of while------------------------------------
-		 * 
-		 * } finally { close(); }
-		 * 
-		 * return cartList;
-		 * 
-		 * }
-		 */
+		public List<ProductVO> ProductList(String pdno) throws SQLException {
 		
+		List<ProductVO> productList = new ArrayList<>();
+		
+		try {
+		conn = ds.getConnection();
+		
+		String sql = "SELECT PDNO, PDNAME, PDCATEGORY_FK, PDIMAGE1, PDIMAGE2, PDQTY, PRICE, SALEPRICE, PDCONTENT, POINT, TEXTURE   "+
+		"FROM TBL_PRODUCT  "+
+		"WHERE PDNO = ? ";
+		/*			
+		String sql = "SELECT  " + "PD.PDNO, PD.PDNAME, PD.PDCATEGORY_FK, PD.PDIMAGE1, PD.PDIMAGE2,  "
+		+ "PD.PDQTY, PD.PRICE, PD.SALEPRICE, PD.PDCONTENT, PD.POINT,  "
+		+ "PD.TEXTURE, PDINFO.PINFONO, PDINFO.PCOLOR, PDINFO.PSIZE  " + "FROM ( "
+		+ "SELECT PDNO, PDNAME, PDCATEGORY_FK, PDIMAGE1, PDIMAGE2, PDQTY, PRICE, SALEPRICE, PDCONTENT, POINT, TEXTURE  FROM TBL_PRODUCT ) PD "
+		+ "JOIN  ( SELECT PINFONO, PDNO_FK , PCOLOR, PSIZE FROM TBL_PRODUCT_INFO  ) PDINFO "
+		+ "ON PD.PDNO = PDINFO.PDNO_FK WHERE PDNO = ? " + "ORDER BY PD.PDNO ASC ";
+		*/
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, pdno);
+		
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+		
+		// System.out.println("DAO-Checked");
+		ProductVO pdvo = new ProductVO();
+		
+		pdvo.setPdno(rs.getInt(1));
+		pdvo.setPdname(rs.getString(2));
+		pdvo.setPdcategory_fk(rs.getString(3));
+		pdvo.setPdimage1(rs.getString(4));
+		pdvo.setPdimage2(rs.getString(5));
+		
+		pdvo.setPdqty(rs.getInt(6));
+		pdvo.setPrice(rs.getInt(7));
+		pdvo.setSaleprice(rs.getInt(8));
+		pdvo.setPdcontent(rs.getString(9));
+		pdvo.setPoint(rs.getInt(10));
+		
+		pdvo.setTexture(rs.getString(11));
+		//System.out.println("dao-check HSU");
+		/*
+		pdvo.setPinfono(rs.getInt(12));
+		// pdvo.setPdno_fk( rs.getString(13) );
+		pdvo.setPcolor(rs.getString(13));
+		pdvo.setPsize(rs.getString(14));
+		*/
+		productList.add(pdvo);
+		
+		} // end of while------------------------------------
+		
+		} finally {
+		close();
+		}
+		
+		return productList;
+		
+		}
+		
+		/*
+		* // 물품상세페이지에서 장바구니 (승의)
+		* 
+		* @Override public List<CartVO> CartList() throws SQLException {
+		* 
+		* List<CartVO> cartList = new ArrayList<>(); try { conn = ds.getConnection();
+		* 
+		* String sql = " SELECT CARTNO, USERID_FK, PDNO_FK, PQTY, REGISTERDAY "+
+		* "FROM TBL_CART "+ "FROM TBL_CART "+ "WHERE pdno = ? ORDER BY CARTNO ASC ";
+		* 
+		* pstmt = conn.prepareStatement(sql);
+		* 
+		* rs = pstmt.executeQuery();
+		* 
+		* while (rs.next()) {
+		* 
+		* // System.out.println("DAO-Checked"); CartVO cvo = new CartVO();
+		* 
+		* cvo.setCartno(rs.getInt(1)); cvo.setUserid_fk(rs.getString(2));
+		* cvo.setPdno_fk(rs.getInt(3)); cvo.setPqty(rs.getInt(4));
+		* cvo.setRegisterday(rs.getString(5));
+		* 
+		* 
+		* cartList.add(cvo);
+		* 
+		* } // end of while------------------------------------
+		* 
+		* } finally { close(); }
+		* 
+		* return cartList;
+		* 
+		* }
+		*/
 		
 		// 물품상세페이지에서의 사이즈,색상 (승의)
 		@Override
-		public List<ProductInfoVO> ProductInfoList() throws SQLException {
-
-			List<ProductInfoVO> productinfoList = new ArrayList<>();
-
-			try {
-				conn = ds.getConnection();
-
-				String sql = "SELECT PINFONO, PDNO_FK, PCOLOR, PSIZE " + "FROM TBL_PRODUCT_INFO " + "WHERE PINFONO = 1 "
-						+ "ORDER BY PINFONO ASC";
-
-				pstmt = conn.prepareStatement(sql);
-				/* pstmt.setInt(1, ); */
-
-				rs = pstmt.executeQuery();
-
-				while (rs.next()) {
-
-					// System.out.println("DAO-Checked");
-					ProductInfoVO productinfovo = new ProductInfoVO();
-
-					productinfovo.setPinfono(rs.getInt(1));
-					productinfovo.setPdno_fk(rs.getInt(2));
-					productinfovo.setPcolor(rs.getString(3));
-					productinfovo.setPsize(rs.getString(4));
-
-					productinfoList.add(productinfovo);
-
-				} // end of while------------------------------------
-
-			} finally {
-				close();
-			}
-
-			return productinfoList;
-
+		public List<ProductInfoVO> ProductInfoList( ) throws SQLException {
+		
+		List<ProductInfoVO> productinfoList = new ArrayList<>();
+		
+		try {
+		conn = ds.getConnection();
+		
+		String sql = "SELECT PINFONO, PDNO_FK, PCOLOR, PSIZE " + "FROM TBL_PRODUCT_INFO " + "WHERE PDNO_FK = 1 "
+		+ "ORDER BY PINFONO ASC";
+		
+		pstmt = conn.prepareStatement(sql);
+		//pstmt.setInt(1, PINFONO); 
+		
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+		
+		// System.out.println("DAO-Checked");
+		ProductInfoVO productinfovo = new ProductInfoVO();
+		
+		productinfovo.setPinfono(rs.getInt(1));
+		productinfovo.setPdno_fk(rs.getInt(2));
+		productinfovo.setPcolor(rs.getString(3));
+		productinfovo.setPsize(rs.getString(4));
+		
+		productinfoList.add(productinfovo);
+		
+		} // end of while------------------------------------
+		
+		} finally {
+		close();
+		}
+		
+		return productinfoList;
+		
 		}
 
-		
-		//////////////////////////////////////승의씨 마무리할것///////////////////////////////////////
-		
-		
 
 	///////////////////////////////////////김동휘/////////////////////////////////////
 
@@ -1058,6 +1145,75 @@ public class ProductDAO implements InterProductDAO {
 			}
 			
 			return cartList;
+		}
+		
+		@Override
+		public void productAllDelete(int pdno, String userid_fk) throws SQLException {
+			
+			try {
+				conn = ds.getConnection(); // DBCP에서 connection 받아오기
+				
+				String sql = " delete from TBL_CART where userid_fk = ? and pdno_fk = ? ";
+				
+				pstmt = conn.prepareStatement(sql); // prepareStatment로 sql을 보낸다.
+				
+				//pstmt.setString(1, userid_fk);
+				pstmt.setInt(2, pdno);
+				pstmt.setString(1, "siasia");
+				
+				int n = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}
+			
+		}
+		
+		// 상품 개별삭제 버튼을 누를경우 유저의 ID와 해당 제품의 번호를 받아와 DB테이블에서 삭제해주는 메서드
+		@Override
+		public int productOneDelete(String pdno, String userid_fk) throws SQLException {
+			int result = 0;
+			
+			try {
+				conn = ds.getConnection(); // DBCP에서 connection 받아오기
+				
+				String sql = " delete from TBL_CART where userid_fk = ? and pdno_fk = ? ";
+				
+				pstmt = conn.prepareStatement(sql); // prepareStatment로 sql을 보낸다.
+				
+				//pstmt.setString(1, userid_fk);
+				pstmt.setString(1, "siasia");
+				pstmt.setString(2, pdno);
+				
+				result = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}
+			
+			return result;
+		}
+
+		@Override
+		public void productChoiceDelete(int pdno, String userid_fk) throws SQLException {
+			
+			try {
+				conn = ds.getConnection(); // DBCP에서 connection 받아오기
+				
+				String sql = " delete from TBL_CART where userid_fk = ? and pdno_fk = ? ";
+				
+				pstmt = conn.prepareStatement(sql); // prepareStatment로 sql을 보낸다.
+				
+				//pstmt.setString(1, userid_fk);
+				pstmt.setString(1, "siasia");
+				pstmt.setInt(2, pdno);
+				
+				int result = pstmt.executeUpdate();
+				
+			} finally {
+				close();
+			}
+			
 		}
 
 

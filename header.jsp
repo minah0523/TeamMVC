@@ -155,7 +155,7 @@
             if (key.keyCode == 13) {
                 goSearchProduct();
             }
-        });
+        });		
 		
 	});
 	
@@ -175,6 +175,7 @@
 	
 	function womenClick() {
 		$("li#women").click(function(){
+			
 			
 			
 			var womenVal = $(this).attr('value');
@@ -206,7 +207,7 @@
 		var keyword = $('#Main_Search_Input').val();
 		
 		location.href="<%= ctxPath %>/search/SearchPage.neige?pdgender="+gender+"&pdcategory_fk=0&searchname="+keyword;
-	}
+	}	
 
 </script>
 
@@ -219,7 +220,7 @@
 		<div class="row MainRow">
 			<div class="col-md-3" id = "Sist_Logo" >
 				<ul>
-					<li value = "2" id = "neige">
+					<li value = "2" id = "neige" style="list-style-type: none;">
 						<a style="cursor:pointer;" href="javascript:void(0);" onclick="neigeClick();">NEIGE</a>
 					</li>
 				</ul>
@@ -237,7 +238,7 @@
 			</div>
 			
 			<div class="col-md-3" id = "Gender_Category">
-				<input type="text" placeholder="&nbsp;&nbsp;Search " name="Main_Search_Input" id="Main_Search_Input" style="padding-left: 20px;" />
+				<input type="text" placeholder="&nbsp;&nbsp;Search " name="Main_Search_Input" id="Main_Search_Input" />
 				<button type="button" id="Main_Search_Button"
 						style =  "background-color: #BCA897; border: none; color:#fff;
 							      text-align: center; text-decoration: none; padding: 5px;
@@ -249,16 +250,38 @@
 			
 			<div class="col-md-4" id="Login_MyInfo_Cart">
 				<a id = "Cart" href="<%= ctxPath %>/product/productCart.neige" >장바구니 </a> <span class= "delimiter" >|</span>
-				<a href="<%= ctxPath %>/member/myPage.neige">내정보 </a>  <span class= "delimiter">|</span>
-				<a href="<%= ctxPath %>/member/memberRegister.neige">회원가입 </a> <span class= "delimiter" >|</span>
-				<a href="<%= ctxPath %>/login/login.neige">로그인</a> <span class= "delimiter" >|</span>
-				<a href="<%= ctxPath %>/admin/adminMain.neige">관리자</a>	
+				
+				<c:if test="${!empty sessionScope.loginuser}">
+                     <a href="<%= ctxPath %>/member/myPage.neige">마이페이지 </a>
+                     <span class="delimiter">|</span>
+                </c:if>
+                     
+				<c:if test="${empty sessionScope.loginuser}">
+                      <a href="<%= ctxPath %>/member/memberRegister.neige">회원가입 </a>
+                      <span class="delimiter">|</span>
+                </c:if>
+				
+				
+				<%-- <a href="<%= ctxPath %>/login/loginPage.neige">로그인</a> <span class= "delimiter" >|</span> --%>		
+                <c:choose>
+                   <c:when test="${empty sessionScope.loginuser}">
+                      <a href="<%= ctxPath %>/login/loginPage.neige">로그인</a><span class= "delimiter" >|</span>
+                   </c:when>
+                   <c:otherwise>
+                     <%--  <span style="color:orange"> ${(sessionScope.loginuser).userid}님</span>  --%>
+                     <a href="<%= ctxPath %>/login/logout.neige">로그아웃</a><span class= "delimiter" >|</span>
+                   </c:otherwise>
+
+                </c:choose>
+                <c:if test="${sessionScope.loginuser.userid == 'admin'}">
+					<a href="<%= ctxPath %>/admin/adminMain.neige">관리자</a>	
+				</c:if>
             </div>
             
 		</div>
 	</div>
 	
-	<%--
+	<%-- 	
 	<div id="headerMenuBar">
 		<div id = "Menu_Items" class="row MainMenu">		
 			
@@ -291,4 +314,3 @@
 <div id="contents" align="center">
 
 <!-- <br><br><br><br><br><br> -->
-

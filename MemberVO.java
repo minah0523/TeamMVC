@@ -1,5 +1,7 @@
 package member.mdl;
 
+import java.util.Calendar;
+
 public class MemberVO {
 	private String userid;             // 회원아이디
 	private String pwd;                // 비밀번호 (SHA-256 암호화 대상)
@@ -29,6 +31,19 @@ public class MemberVO {
 	/////////////////////////////////////////////////////////////////////
 	
 	public MemberVO() {}
+	
+	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
+			String address, String detailaddress, String extraaddress) {
+		this.userid = userid;
+		this.pwd = pwd;
+		this.name = name;
+		this.email = email;
+		this.mobile = mobile;
+		this.postcode = postcode;
+		this.address = address;
+		this.detailaddress = detailaddress;
+		this.extraaddress = extraaddress;
+	}
 	
 	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
 			String address, String detailaddress, String extraaddress, String gender, String birthday) {
@@ -191,7 +206,18 @@ public class MemberVO {
 		this.requirePwdChange = requirePwdChange;
 	}
 	
-	
+	public int getAge() {
+		int age = 0;
+		
+		Calendar currentDate = Calendar.getInstance(); 
+		// 현재날짜와 시간을 얻어온다.
+		
+		int currentYear = currentDate.get(Calendar.YEAR);
+		
+		age =  currentYear - Integer.parseInt(birthday.substring(0,4)) + 1;
+		
+		return age;
+	}
 	
 	
 	

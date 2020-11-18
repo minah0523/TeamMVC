@@ -3,7 +3,7 @@ package member.mdl;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.sql.*;
-import java.util.*;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -52,9 +52,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-////////////////////////////////////////////신호연////////////////////////////////////////////////////
-	
-	// 회원가입을 해주는 메소드 (tbl_member 테이블에 insert) (호연)
+	// 회원가입을 해주는 메소드 (tbl_member 테이블에 insert)
 	@Override
 	public int registerMember(MemberVO member) throws SQLException {
 		
@@ -92,7 +90,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-	// ID 중복검사 (tbl_member 테이블에서 userid 가 존재하면 true를 리턴해주고, userid 가 존재하지 않으면 false를 리턴한다)  (호연)
+	// ID 중복검사 (tbl_member 테이블에서 userid 가 존재하면 true를 리턴해주고, userid 가 존재하지 않으면 false를 리턴한다) 
 	@Override
 	public boolean idDuplicateCheck(String userid) throws SQLException {
 		
@@ -119,7 +117,7 @@ public class MemberDAO implements InterMemberDAO {
 		return isExist;
 	}
 
-	// email 중복검사 (tbl_member 테이블에서 email 이 존재하면 true를 리턴해주고, email 이 존재하지 않으면 false를 리턴한다) (호연)
+	// email 중복검사 (tbl_member 테이블에서 email 이 존재하면 true를 리턴해주고, email 이 존재하지 않으면 false를 리턴한다)
 	@Override
 	public boolean emailDuplicateCheck(String email) throws SQLException {
 
@@ -149,7 +147,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-	// 입력받은 paraMap 을 가지고 한명의 회원정보를 리턴시켜주는 메소드(로그인 처리) (호연)
+	// 입력받은 paraMap 을 가지고 한명의 회원정보를 리턴시켜주는 메소드(로그인 처리)
 	@Override
 	public MemberVO selectOneMember(Map<String, String> paraMap) throws SQLException {
 		
@@ -246,7 +244,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-	// 아이디 찾기(성명, 이메일을 입력받아서 해당 사용자의 아이디를 알려준다) (호연)
+	// 아이디 찾기(성명, 이메일을 입력받아서 해당 사용자의 아이디를 알려준다)
 	@Override
 	public String findUserid(Map<String, String> paraMap) throws SQLException {
 		
@@ -279,7 +277,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-	// 비밀번호 찾기(아이디, 이메일을 입력받아서 해당 사용자가 존재하는지 유무를 알려준다) (호연)
+	// 비밀번호 찾기(아이디, 이메일을 입력받아서 해당 사용자가 존재하는지 유무를 알려준다)
 	@Override
 	public boolean isUserExist(Map<String, String> paraMap) throws SQLException {
 		
@@ -310,7 +308,7 @@ public class MemberDAO implements InterMemberDAO {
 	}
 
 	
-	// 암호 변경하기  (호연)
+	// 암호 변경하기 
 	@Override
 	public int pwdUpdate(Map<String, String> paraMap) throws SQLException {
 		
@@ -336,281 +334,47 @@ public class MemberDAO implements InterMemberDAO {
 		return result;
 	}	
 	
-	////////////////////////////////////////////김동휘////////////////////////////////////////////////////
-	
-	@Override
-	public int coinUpdate(Map<String, String> paraMap) throws SQLException {
-		
-		int result = 0;
-		
-		try {
-			conn = ds.getConnection();
-			
-			String sql = "update tbl_member set coin = coin + ?, point = point + ? "     
-					+ "where userid = ? "; 
-			
-			pstmt = conn.prepareStatement(sql);
-			
-			pstmt.setString(1, paraMap.get("coinmoney") ); // 암호를 SHA256 알고리즘으로 단방향 암호화 시킨다. 
-			pstmt.setInt(2, (int)(Integer.parseInt(paraMap.get("coinmoney")) * 0.01));
-			pstmt.setString(3, paraMap.get("userid"));
-			
-			result = pstmt.executeUpdate();
-			
-		} finally {
-			close();
-		}		
-		
-		return result;
-	}
-	
+
+	// 회원의 개인 정보 변경하기  
 	@Override
 	public int updateMember(MemberVO member) throws SQLException {
-		
+
 		int result = 0;
 		
 		try {
 			conn = ds.getConnection();
 			
-			String sql = " update tbl_member set pwd=?,"
-					+ " name=?, "
-					+ " email=?, "
-					+ " mobile=?, "
-					+ " postcode=?, "
-					+ " address=?, "
-					+ " detailaddress=?, "
-					+ " extraaddress=? "     
-					+ " where userid = ? "; 
+			String sql = "update tbl_member set name = ? "
+					   + "                    , email = ? " 
+					   + "                    , mobile = ? "
+					   + "                    , postcode = ? "
+					   + "                    , address = ? "
+					   + "                    , detailaddress = ? "
+					   + "                    , extraaddress = ? "
+					   + "where userid = ? "; 
 			
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, Sha256.encrypt(member.getPwd()) ); // 암호를 SHA256 알고리즘으로 단방향 암호화 시킨다. 
-			pstmt.setString(2, member.getName());
-			pstmt.setString(3, aes.encrypt( member.getEmail() ) );  // 이메일을 AES256 알고리즘으로 단방향 암호화 시킨다.
-			pstmt.setString(4, aes.encrypt( member.getMobile() ) ); // 휴대폰번호를 AES256 알고리즘으로 양방향 암호화 시킨다.
-			pstmt.setString(5, member.getPostcode());
-			pstmt.setString(6, member.getAddress());
-			pstmt.setString(7, member.getDetailaddress());
-			pstmt.setString(8, member.getExtraaddress());
-			pstmt.setString(9, member.getUserid());
-			
+			pstmt.setString(1, member.getName()); 
+			pstmt.setString(2, aes.encrypt(member.getEmail()) );
+			pstmt.setString(3, aes.encrypt(member.getMobile()) );
+			pstmt.setString(4, member.getPostcode() );
+			pstmt.setString(5, member.getAddress() );
+			pstmt.setString(6, member.getDetailaddress() );
+			pstmt.setString(7, member.getExtraaddress() );
+			pstmt.setString(8, member.getUserid() );
+						
 			result = pstmt.executeUpdate();
 			
 		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} finally {
 			close();
-		}		
+		}
 		
-		return result;
+		return result;		
+
 	}
-	
-	@Override
-	public List<MemberVO> selectAllMember() throws SQLException {
-		
-		List<MemberVO> memberList = new ArrayList<MemberVO>();
-		
-		try {
-			conn = ds.getConnection();
-			
-			String sql = " select userid, name, email, gender "
-					+ " from tbl_member "
-					+ " where userid != 'admin'"
-					+ " order by REGISTERDAY desc";
-			
-			pstmt = conn.prepareStatement(sql);
-			
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				MemberVO mvo = new MemberVO();
-				mvo.setUserid(rs.getString(1));
-				mvo.setName(rs.getString(2));
-				mvo.setEmail(aes.decrypt(rs.getString(3)));
-				mvo.setGender(rs.getString(4));
-				
-				memberList.add(mvo);
-			}
-			
-		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}		
-		
-		return memberList;
-	}
-	
-	@Override
-	public List<MemberVO> selectMember(Map<String, String> paraMap) throws SQLException {
-		
-		List<MemberVO> memberList = new ArrayList<MemberVO>();
-		
-		try {
-			conn = ds.getConnection();
-			
-			String sql = " select userid, name, email, gender "
-					+ " from tbl_member "
-					+ " where userid != 'admin'";
-			
-			String colname = paraMap.get("searchType");
-			String searchWord = paraMap.get("searchWord");
-			
-			if("email".equals(colname)) {
-				//검색대상이 email인 경우
-				searchWord = aes.encrypt(searchWord);
-			}
-			
-			if(searchWord != null && !searchWord.trim().isEmpty() ) {
-				sql += " and "+colname+" like '%' || ? || '%' ";
-			}
-			
-			sql += " order by registerday desc ";
-			
-			pstmt = conn.prepareStatement(sql);
-			
-			if(searchWord != null && !searchWord.trim().isEmpty() ) {
-				pstmt.setString(1, searchWord);
-			}
-			
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				MemberVO mvo = new MemberVO();
-				mvo.setUserid(rs.getString(1));
-				mvo.setName(rs.getString(2));
-				mvo.setEmail(aes.decrypt(rs.getString(3)));
-				mvo.setGender(rs.getString(4));
-				
-				memberList.add(mvo);
-			}
-			
-		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}		
-		
-		return memberList;
-	}
-	
-	@Override
-	public List<MemberVO> selectPagingMember(Map<String, String> paraMap) throws SQLException {
-		
-		List<MemberVO> memberList = new ArrayList<MemberVO>();
-		
-		try {
-			conn = ds.getConnection();
-			
-			String sql = " select userid, name, email, gender\n "+
-					" from\n "+
-					" (\n "+
-					"    select rownum as rno, userid, name, email, gender\n "+
-					"    from\n "+
-					"    (   \n "+
-					"        select userid, name, email, gender\n "+
-					"        from tbl_member\n "+
-					"        where userid != 'admin'\n ";
-			
-			String colname = paraMap.get("searchType");
-			String searchWord = paraMap.get("searchWord");
-			
-			if("email".equals(colname)) {
-				//검색대상이 email인 경우
-				searchWord = aes.encrypt(searchWord);
-			}
-			
-			if(searchWord != null && !searchWord.trim().isEmpty() ) {
-				sql += "        and "+colname+" like '%' || ? || '%'\n ";
-			}
-			
-			sql += "       order by registerday desc\n "+
-					"    ) V\n "+
-					" )T\n "+
-					" where rno between ? and ? ";
-			
-			pstmt = conn.prepareStatement(sql);
-			
-			int currentShowPageNo = Integer.parseInt(paraMap.get("currentShowPageNo"));
-			int sizePerPage = Integer.parseInt(paraMap.get("sizePerPage"));
-			
-			if(searchWord != null && !searchWord.trim().isEmpty() ) {
-				pstmt.setString(1, searchWord);
-				pstmt.setInt(2, (currentShowPageNo * sizePerPage) - (sizePerPage - 1));
-				pstmt.setInt(3, (currentShowPageNo * sizePerPage));
-			}
-			else {
-				pstmt.setInt(1, (currentShowPageNo * sizePerPage) - (sizePerPage - 1));
-				pstmt.setInt(2, (currentShowPageNo * sizePerPage));
-			}
-			
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				MemberVO mvo = new MemberVO();
-				mvo.setUserid(rs.getString(1));
-				mvo.setName(rs.getString(2));
-				mvo.setEmail(aes.decrypt(rs.getString(3)));
-				mvo.setGender(rs.getString(4));
-				
-				memberList.add(mvo);
-			}
-			
-		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}		
-		
-		return memberList;
-	}
-	
-	 // 페이징 처리를 위해 전체 회원에 대한 총 페이지 개수 알아오기 (select)
-    @Override
-    public int getTotalPage(Map < String, String > paraMap) throws SQLException {
-
-        int totalPage = 0;
-
-        try {
-            conn = ds.getConnection();
-
-            String sql = " select ceil(count(*)/ ? ) from tbl_member where userid != 'admin' ";
-
-            String colname = paraMap.get("searchType");
-            String searchWord = paraMap.get("searchWord");
-
-            if ("email".equals(colname)) {
-                // 검색대상이 email 인 경우
-                searchWord = aes.encrypt(searchWord);
-            }
-
-            if (searchWord != null && !searchWord.trim().isEmpty()) {
-                sql += " and " + colname + " like '%'|| ? || '%' ";
-            }
-
-            pstmt = conn.prepareStatement(sql);
-            
-            pstmt.setString(1, paraMap.get("sizePerPage"));
-            
-            if (searchWord != null && !searchWord.trim().isEmpty()) {
-            pstmt.setString(2, paraMap.get("searchWord"));
-            }
-            
-            rs = pstmt.executeQuery();
-
-            rs.next();
-            
-            totalPage = rs.getInt(1);
-            
-        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } finally {
-            close();
-        }
-
-        return totalPage;
-
-    }
 	
 	
 }

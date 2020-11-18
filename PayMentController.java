@@ -24,7 +24,7 @@ public class PayMentController extends AbstractController {
 		//request.getParameter("pdno");
 		
 		// 로그인된 유저의 아이디 정보를 받아온다.
-		String userid = "siasia"; 
+		String userid = "siasia";
 		// 유저 로그인이 완료될경우 주석문 해제
 		//((MemberVO) session.getAttribute("loginuser")).getUserid();
 		

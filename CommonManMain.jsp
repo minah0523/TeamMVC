@@ -68,7 +68,6 @@
    div.discription > ul > li {
    	  margin-bottom: 5px;
    }
-
    div.discription > ul > li > span {
    	  font-size: 10pt;
    } 
@@ -84,7 +83,6 @@
 
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
 		
 		// Top, Down 버튼 올렸을 때 CSS 지정
@@ -134,7 +132,6 @@
 			var pdcategory_fk = ${sessionScope.pdcategory_fk};
 			
 			location.href="<%= ctxPath%>/category/categorySelectList.neige?pdcategory_fk="+pdcategory_fk+"&sort="+sort+"&gender="+gender;
-
 		});
 		
 		// 카테고리 코드 받아서 클릭 했을때 클릭 상태 표시를 위해서 배경색 변경
@@ -160,7 +157,6 @@
 		
 	});
 	
-
 </script>
 
 
@@ -293,4 +289,3 @@
 </div>
 
 <%-- div contents --%>
-

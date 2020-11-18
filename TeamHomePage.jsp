@@ -68,7 +68,6 @@ String ctxPath = request.getContextPath();
    div.discription > ul > li {
    	  margin-bottom: 5px;
    }
-
    div.discription > ul > li > span {
    	  font-size: 10pt;
    } 
@@ -98,7 +97,6 @@ String ctxPath = request.getContextPath();
 
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
 		
 		$("span.pdNo").hide();
@@ -152,7 +150,6 @@ String ctxPath = request.getContextPath();
 				
 		});	
 		
-
 		// 각각의 이미지를 클릭 했을 경우 
 		$("img.productImgList").click(function(){
 			
@@ -160,7 +157,6 @@ String ctxPath = request.getContextPath();
 			alert("pdno ==========> ?" + pdno);
 			
 		});	
-
 	});
 	
 	

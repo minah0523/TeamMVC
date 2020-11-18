@@ -11,7 +11,15 @@
 <html>
 <head>
 
-<link rel="stylesheet" type="text/css" href="css/style_dh.css">
+<jsp:include page="../header.jsp" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/style_dh.css" />
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/OwlCarousel2-2.3.4/dist/assets/owl.carousel.min.css" />
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/OwlCarousel2-2.3.4/dist/assets/owl.theme.green.css" />
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/OwlCarousel2-2.3.4/dist/assets/owl.theme.green.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<script src="<%= ctxPath%>/OwlCarousel2-2.3.4/dist/owl.carousel.min.js"></script>
 
 <style>
 	ul {
@@ -26,17 +34,48 @@
 		margin: 0 auto;
 	}
 	
+	li.notimg {
+		padding-top: 30px;
+	}
+	
 </style>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		//--------------------------------- 상품수량버튼 ---------------------------------//
 		var datalength = $("div.data").length; 
+		
+		//--------------------------------- 페이지 로딩시 가격출력 ---------------------------------//
+		var sumPrice = 0;
+		var sumAmount = 0;
+			
+		for(var i=0; i<datalength; i++) {
+			var iprice = Number( $("input.totalprice").eq(i).val() );
+			var iamount = Number( $("input:text[name=amountInput]").eq(i).val() );
+				
+			sumPrice += iprice;
+			sumAmount += iamount
+		}
+		
+		$("input.sumAmount").val( sumAmount );
+		$("input.sumPrice").val( sumPrice );
+		
+		 // 페이지 출력시 선택된 상품이 없기 때문에 최종결제금액은 0원으로 출력
+		$("input#checkedSumPrice").val("0");
+		$("input#finalPrice").val("0");
+		//--------------------------------- 페이지 로딩시 가격출력 끝 ---------------------------------//
+		
+		
+		
+		//--------------------------------- 상품수량버튼 ---------------------------------//
+		
+		$(".error").hide();
 		
 		$("i.up").click(function() {
 			
-			var index = $("i.up").index(this);
+			var index = $("i.up").index(this); //현재 클릭된 제품의 인덱스 번호를 얻어옴
 			
+			//--------------------------------- 수량에 따른 총가격변화 ---------------------------------//
+			// 이벤트가 발생한 인덱스를 가진 html 값의 변화
 			var $productpoint = $("input.productpoint").eq(index);
 			const p_priceVal = $("input.p_price").eq(index).val();
 			var amount = $("input:text[name=amountInput]").eq(index).val();
@@ -49,18 +88,51 @@
 			$("input.productpoint").eq(index).val(finalPoint);
 			$("input:text[name=amountInput]").eq(index).val(amount);
 			$("input.totalprice").eq(index).val(finalPrice);
+			//--------------------------------- 수량에 따른 총가격변화 끝 ---------------------------------//
 			
-		<%--	
-			var amountInput = $(this).parent().prev().val();
-			var firstproductPoint = $(this).parent().parent().parent().next().find("input.productPoint").val();
+			//--------------------------------- 수량에 따른 결제 가격변화  ---------------------------------//
+			var chk = $("input:checkbox[name=buy]").eq(index).is(":checked");
+			//해당 인덱스 번호의 체크박스를 확인한다.
 			
-			amountInput = parseInt(amountInput) + 1;
+			var checkedSumPrice = 0; // 선택된 제품들의 결재합
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0;
 			
-			var productPoint =(amountInput * parseInt(firstproductPoint)); 
+        	for(var i=0; i<datalength; i++) {
+        		
+	    		if(chk) { // 수량을 올린 제품의 체크박스가 true인 경우 : 해당 물건을 구매할려는 경우
+	    			// 다시 최종금액을 만들어서 출력
+    				var iprice = Number( $("input.totalprice").eq(i).val() );
+    				
+    				checkedSumPrice += iprice;
+    			}
+        	}
+        	// 결재금액은 최종적으로 선택되어진 상품들 - 사용된 유저 포인트를 차감하여 화면에 출력
+    			finalPrice = checkedSumPrice - usePoint
+    			
+        		$("input#checkedSumPrice").val(checkedSumPrice);
+        		$("input#finalPrice").val(finalPrice);
+        		
+			//--------------------------------- 수량에 따른 결제 가격변화 끝 ---------------------------------//
 			
-			$(this).parent().prev().val(amountInput);
-			$(this).parent().parent().parent().next().find("input.productPoint").val(productPoint);
-		--%>	
+			//--------------------------------- 상품총액, 상품총수량 출력 ---------------------------------//
+			
+			var sumPrice = 0;
+			var sumAmount = 0;
+			
+			for(var i=0; i<datalength; i++) {
+				var iprice = Number( $("input.totalprice").eq(i).val() );
+				var iamount = Number( $("input:text[name=amountInput]").eq(i).val() );
+				
+				sumPrice += iprice;
+				sumAmount += iamount
+			}
+			
+			$("input.sumAmount").val( sumAmount );
+			$("input.sumPrice").val( sumPrice );
+			
+			//--------------------------------- 상품총액, 상품총수량 출력 끝---------------------------------//
+		
 		});
 		
 		$("i.down").click(function () {
@@ -68,22 +140,65 @@
 			var index = $("i.down").index(this);
 			
 			var $productpoint = $("input.productpoint").eq(index);
-			var p_priceVal = $("input.p_price").eq(index).val();
+			const p_priceVal = $("input.p_price").eq(index).val();
 			var amount = $("input:text[name=amountInput]").eq(index).val();
 			
 			amount = Number(amount) - 1;
 			
-			if(amount < 0 ){
-				alert("수량을 0이하로 입력하실수 없습니다. ");
+			if(amount < 0) {
+				alert("수량은 0 이하로 설정하실수 없습니다.");
 				return false;
 			}
 			
 			var finalPoint =  Number(p_priceVal)* 0.01 * amount;
-			var finalPrice = Number( p_priceVal ) * amount;
+			var finalPrice = Number( p_priceVal ) * amount; 
 			
 			$("input.productpoint").eq(index).val(finalPoint);
 			$("input:text[name=amountInput]").eq(index).val(amount);
 			$("input.totalprice").eq(index).val(finalPrice);
+			
+			//--------------------------------- 수량에 따른 결제 가격변화  ---------------------------------//
+			var chk = $("input:checkbox[name=buy]").eq(index).is(":checked");
+			//해당 인덱스 번호의 체크박스를 확인한다.
+			
+			var checkedSumPrice = 0; // 선택된 제품들의 결재합
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0;
+			
+        	for(var i=0; i<datalength; i++) {
+        		
+	    		if(chk) { // 수량을 올린 제품의 체크박스가 true인 경우 : 해당 물건을 구매할려는 경우
+	    			// 다시 최종금액을 만들어서 출력
+    				var iprice = Number( $("input.totalprice").eq(i).val() );
+    				
+    				checkedSumPrice += iprice;
+    			}
+        	}
+        	// 결재금액은 최종적으로 선택되어진 상품들 - 사용된 유저 포인트를 차감하여 화면에 출력
+    			finalPrice = checkedSumPrice - usePoint
+    			
+        		$("input#checkedSumPrice").val(checkedSumPrice);
+        		$("input#finalPrice").val(finalPrice);
+        		
+			//--------------------------------- 수량에 따른 결제 가격변화 끝 ---------------------------------//
+			
+			//--------------------------------- 상품총액, 상품총수량 출력 ---------------------------------//
+			
+			var sumPrice = 0;
+			var sumAmount = 0;
+			
+			for(var i=0; i<datalength; i++) {
+				var iprice = Number( $("input.totalprice").eq(i).val() );
+				var iamount = Number( $("input:text[name=amountInput]").eq(i).val() );
+				
+				sumPrice += iprice;
+				sumAmount += iamount
+			}
+			
+			$("input.sumAmount").val( sumAmount );
+			$("input.sumPrice").val( sumPrice );
+			
+			//--------------------------------- 상품총액, 상품총수량 출력 끝---------------------------------//
 			
 		});
 		//--------------------------------- 상품수량버튼  끝 ---------------------------------//
@@ -91,24 +206,54 @@
 		//--------------------------------- 상품 전체 체크박스  ---------------------------------//
 		$("input:checkbox[id=buyAllCheck]").click(function(){
         	var chk = $(this).is(":checked");//.attr('checked');
-        	if(chk) {
+        	var checkedSumPrice = 0; // 선택된 제품들의 결재합
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0;
+    		
+        	if(chk) { // 상품 전체 선택시 값
         		$("input:checkbox[name=buy]").prop('checked', true);
+        		
+        	// 상품을 체크박스에서 선택시 모든 체크박스들을 확인한 뒤 체크된 상품들만 가격을 합한다.
+        		for(var i=0; i<datalength; i++) {
+    				var iprice = Number( $("input.totalprice").eq(i).val() );
+    				
+    				checkedSumPrice += iprice;
+    			}
+    			
+        	// 결재금액은 최종적으로 선택되어진 상품들 - 사용된 유저 포인트를 차감하여 화면에 출력
+    			finalPrice = checkedSumPrice - usePoint
+    			
+        		$("input#checkedSumPrice").val(checkedSumPrice);
+        		$("input#finalPrice").val(finalPrice);
         	}
-        	else {
+        	else { // 상품 전체 해제시 값
         		$("input:checkbox[name=buy]").prop('checked', false);
+        	
+        	//상품 전체 해제시 결제금액을 0으로 만든다. 
+        		$("input#checkedSumPrice").val(0);
+        		$("input#finalPrice").val(0);
         	}
+        	
     	});
 		
 		
 		$("input:checkbox[name=buy]").click(function() {
+			
 			var flag = false;
+			var checkedSumPrice = 0; // 선택된 제품들의 결재합
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0; // 포인트와 결재합을 차감한 최종결재금액
+    		var index = $("input:checkbox[name=buy]").index(this);
+    		
 			// 개별 체크박스에서 해제를 하거나 모두 선택할경우 전체 체크박스의 변화
 			$("input:checkbox[name=buy]").each(function() {
 				var checkboxBoolean = $(this).prop("checked");
 				
-				if(!checkboxBoolean){
+				if(!checkboxBoolean){ // 상품 개별 해제
 					flag = true;  // flag 상태를 바꾼다.
-	                return false; // each를  break 한다.
+				}
+				else { // 상품 개별 선택
+					checkedSumPrice += Number( $("input.p_price").eq(index).val() ); 
 				}
 			});
 			
@@ -121,6 +266,12 @@
 			else {
 				$("input:checkbox[id=buyAllCheck]").prop("checked", false);
 			}
+			
+			finalPrice = checkedSumPrice - usePoint
+			
+			$("input#checkedSumPrice").val(checkedSumPrice);
+    		$("input#finalPrice").val(finalPrice);
+			
 		});
 		
 		
@@ -147,8 +298,79 @@
 		//--------------------------------- 상품 개별삭제 ---------------------------------//
 		$("button.deleteOne").click(function(evnet) {
 			$(this).parent().parent().parent().remove();
+		//--------------------------------- 개별 삭제된 뒤 상품총액, 상품총수량 출력 ---------------------------------//
+			
+		datalength = $("div.data").length; // 삭제된 뒤 제품들의 개수를 다시 받아옴
+		
+			var sumPrice = 0; 
+			var sumAmount = 0;
+			
+			for(var i=0; i<datalength; i++) {
+				var iprice = Number( $("input.totalprice").eq(i).val() );
+				var iamount = Number( $("input:text[name=amountInput]").eq(i).val() );
+				
+				sumPrice += iprice;
+				sumAmount += iamount
+			}
+			
+			$("input.sumAmount").val( sumAmount );
+			$("input.sumPrice").val( sumPrice );
+			
+		//--------------------------------- 개별 삭제된 뒤 상품총액, 상품총수량 출력 끝---------------------------------//
+			
+		//--------------------------------- 개별 삭제된 뒤 상품 전체 체크박스  ---------------------------------//
+				var dflag = false;
+				// 개별 체크박스에서 해제를 하거나 모두 선택할경우 전체 체크박스의 변화
+				$("input:checkbox[name=buy]").each(function() {
+					var checkboxBoolean = $(this).prop("checked");
+					
+					if(!checkboxBoolean){
+						dflag = true;  // flag 상태를 바꾼다.
+		                return false; // each를  break 한다.
+					}
+				});
+				
+				if(!dflag) {
+	                // name 이 person인 모든 체크박스를 하나하나씩 체크유무를 검사를 마쳤을때
+	                // 모든 체크박스가 체크가 되어진 상태이라면 
+	                $("input:checkbox[id=buyAllCheck]").prop("checked", true);
+	                // "전체선택/전체해제 체크박스"에 체크를 해둔다.
+	             }
+				else {
+					$("input:checkbox[id=buyAllCheck]").prop("checked", false);
+				}
+			//--------------------------------- 개별 삭제된 뒤 상품 전체 체크박스  끝 ---------------------------------//
+			
+			//--------------------------------- 개별 삭제된 뒤 최종결제금액 출력 ---------------------------------//
+			var checkedSumPrice = 0; // 선택된 제품들의 결재합 초기화
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0;
+			
+        	for(var i=0; i<datalength; i++) {
+        		var chk = $("input:checkbox[name=buy]").eq(i).is(":checked");
+    			
+	    		if(chk) { // 수량을 올린 제품의 체크박스가 true인 경우 : 해당 물건을 구매할려는 경우
+	    			// 다시 최종금액을 만들어서 출력
+    				var iprice = Number( $("input.totalprice").eq(i).val() );
+    				
+    				checkedSumPrice += iprice;
+    			}
+        	}
+        	// 결재금액은 최종적으로 선택되어진 상품들 - 사용된 유저 포인트를 차감하여 화면에 출력
+    			finalPrice = checkedSumPrice - usePoint
+    			
+        		$("input#checkedSumPrice").val(checkedSumPrice);
+        		$("input#finalPrice").val(finalPrice);
+        	//--------------------------------- 개별 삭제된 뒤 최종결제금액 출력  끝 ---------------------------------//
+			
+        	
+        		if(datalength == 0){
+    				$("input#checkedSumPrice").val(0);
+    	    		$("input#finalPrice").val(0);
+    			}
 		});
-		//--------------------------------- 상품 개별삭제 끝---------------------------------//
+		
+		//--------------------------------- 개별 상품 개별삭제 끝---------------------------------//
 		
 		
 		//--------------------------------- 다중 선택상품 삭제 ---------------------------------//
@@ -160,7 +382,72 @@
 				if(checkboxBoolean){
 					$(this).parent().parent().parent().remove();
 				}
+				
+				//--------------------------------- 삭제된 뒤 상품총액, 상품총수량 출력 ---------------------------------//
+				datalength = $("div.data").length; 
+				var sumPrice = 0;
+				var sumAmount = 0;
+				
+				for(var i=0; i<datalength; i++) {
+					var iprice = Number( $("input.totalprice").eq(i).val() );
+					var iamount = Number( $("input:text[name=amountInput]").eq(i).val() );
+					
+					sumPrice += iprice;
+					sumAmount += iamount
+				}
+				
+				$("input.sumAmount").val( sumAmount );
+				$("input.sumPrice").val( sumPrice );
+				
+				//--------------------------------- 삭제된 뒤 상품총액, 상품총수량 출력 끝---------------------------------//
+				
+				//--------------------------------- 삭제된 뒤 상품 전체 체크박스  ---------------------------------//
+				var dflag = false;
+				// 개별 체크박스에서 해제를 하거나 모두 선택할경우 전체 체크박스의 변화
+				$("input:checkbox[name=buy]").each(function() {
+					var checkboxBoolean = $(this).prop("checked");
+					
+					if(!checkboxBoolean){
+						dflag = true;  // flag 상태를 바꾼다.
+		                return false; // each를  break 한다.
+					}
+				});
+				
+				if(!dflag) {
+	                // name 이 person인 모든 체크박스를 하나하나씩 체크유무를 검사를 마쳤을때
+	                // 모든 체크박스가 체크가 되어진 상태이라면 
+	                $("input:checkbox[id=buyAllCheck]").prop("checked", true);
+	                // "전체선택/전체해제 체크박스"에 체크를 해둔다.
+	             }
+				else {
+					$("input:checkbox[id=buyAllCheck]").prop("checked", false);
+				}
+				
+				//--------------------------------- 삭제된 뒤 상품 전체 체크박스  끝 ---------------------------------//
 			});
+			
+			//--------------------------------- 개별 삭제된 뒤 최종결제금액 출력 ---------------------------------//
+			var checkedSumPrice = 0; // 선택된 제품들의 결재합 초기화
+			var usePoint = Number( $("input#usePoint").val() ); // 사용된 포인트의 값
+    		var finalPrice = 0;
+			
+        	for(var i=0; i<datalength; i++) {
+        		var chk = $("input:checkbox[name=buy]").eq(i).is(":checked");
+    			
+	    		if(chk) { // 수량을 올린 제품의 체크박스가 true인 경우 : 해당 물건을 구매할려는 경우
+	    			// 다시 최종금액을 만들어서 출력
+    				var iprice = Number( $("input.totalprice").eq(i).val() );
+    				
+    				checkedSumPrice += iprice;
+    			}
+        	}
+        	// 결재금액은 최종적으로 선택되어진 상품들 - 사용된 유저 포인트를 차감하여 화면에 출력
+    			finalPrice = checkedSumPrice - usePoint
+    			
+        		$("input#checkedSumPrice").val(checkedSumPrice);
+        		$("input#finalPrice").val(finalPrice);
+        	//--------------------------------- 개별 삭제된 뒤 최종결제금액 출력  끝 ---------------------------------//
+			
 		});
 		//--------------------------------- 다중 선택상품 삭제 끝 ---------------------------------//
 		
@@ -168,37 +455,57 @@
 		$("button#allDelete").click(function(){
 			$("#orderform > div.data").remove();
 			
+			$("input.sumAmount").val(0);
+			$("input.sumPrice").val(0);
+			$("input#checkedSumPrice").val(0);
+    		$("input#finalPrice").val(0);
 		});	
 		//--------------------------------- 장바구니 비우기 버튼 끝---------------------------------//
 		
 		//--------------------------------- 주소 불러오기 ---------------------------------//
 		$("input:radio[id=load_address]").click(function() {
 			$("input:text[id=name]").val("${sessionScope.loginuser.name}");
-			$("input:text[id=postcode]").val("${sessionScope.loginuser.name}");
-			$("input:text[id=address]").val("${sessionScope.loginuser.name}");
-			$("input:text[id=mobile]").val("${sessionScope.loginuser.name}");
-			$("input:text[id=deliveryMessage]").val("${sessionScope.loginuser.name}");
+			$("input:text[id=postcode]").val("${sessionScope.loginuser.postcode}");
+			$("input:text[id=address]").val("${sessionScope.loginuser.address}");
+			$("input:text[id=mobile]").val("${sessionScope.loginuser.mobile}");
 		//--------------------------------- 주소 불러오기 끝 ---------------------------------//
 		
-		//--------------------------------- 상품총액, 상품총수량 출력 ---------------------------------//
-		
-		var totalprice = 0;
-		var totalamount = 0;
-		
-		for(var i=0; i<datalength; i++) {
-			var iprice = $("input:text[name=amountInput]").eq(i).val();
-			var iamount = $("input.totalprice").eq(i).val();
-			
-			totalprice += iprice;
-			totalamount += iamount
-		}
-		
-		$("input#totalamount").val(totalprice);
-		$("input#totalprice").val(totalamount);
-		
-		//--------------------------------- 상품총액, 상품총수량 출력 끝---------------------------------//
 		});
 		
+		//--------------------------------- 새로운 배송지 작성 ---------------------------------//
+		$("input:radio[id=Write_address]").click(function() {
+			$("input:text[id=name]").val("");
+			$("input:text[id=postcode]").val("");
+			$("input:text[id=address]").val("");
+			$("input:text[id=mobile]").val("");
+			$("input:text[id=deliveryMessage]").val("");
+		//--------------------------------- 새로운 배송지 작성 끝 ---------------------------------//
+		
+		});
+		
+		$("input#usePoint").blur(function() {
+			var checkedSumPrice = Number( $("input#checkedSumPrice").val() );
+    		var usePoint = Number( $("input#usePoint").val() );
+    		var finalPrice = 0;
+    		
+    		// 포인트 사용량이 가격을 넘어설경우
+    		if(checkedSumPrice <= usePoint) {
+    			
+    			// 결제금액을 0원으로 설정
+    			finalPrice = 0;
+    			
+    			// 포인트 최대치를 가격과 동일하게 설정한다.
+    			usePoint = checkedSumPrice;
+    			
+    			$("input#usePoint").val(usePoint);
+    			$("input#finalPrice").val(0);
+    		}
+    		else if(checkedSumPrice > usePoint) {
+    			finalPrice = checkedSumPrice - usePoint;
+	    		$("input#finalPrice").val(finalPrice);
+    		}
+    		
+		});
 		
 	});
 	
@@ -209,15 +516,92 @@
 	function goback() {
 		location.href="javascript:history.back()";
 	}
+	
+	// 상품 개별삭제 버튼을 눌렀을경우
+	function productAllDelete(){
+		
+		// ajax를 이용하여 장바구니 테이블에서 해당 유저의 선택된 상품 행을 삭제한다.
+        var arrPdno = new Array();
+		
+		 <c:forEach var="pvo" items="${cartList}">
+		   arrPdno.push('${pvo.pdno}'); 
+		 </c:forEach>
+		 
+		 var para_pdnoes = arrPdno.join(","); // "1,1,1,1,2,3,4"
+	 //  alert(para_pdnoes);
+	
+		
+		var para_data = {"pdnoes":para_pdnoes,"userid_fk":'${sessionScope.loginuser.userid}'};
+		
+		$.ajax({
+	         url:"/TeamMVC/product/productAllDelete.neige", 
+	      	 type:"POST",
+	         data:para_data, 
+	         dataType:"JSON",
+	         success:function(){
+	            alert("success");
+	         },
+	         error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	         }
+	      });
+		
+	}
+	
+	function productOneDelete(pdno) {
+		
+		$.ajax({
+			url : "/TeamMVC/product/productOneDelete.neige",
+			type : "POST",
+			data : {"pdno":pdno,"userid":'${sessionScope.loginuser.userid}'},
+			dataType : "JSON",
+			success : function() {
+				alert("success");
+			},
+			error : function(request, status, error) {
+				alert("code: " + request.status + "\n" + "message: "
+						+ request.responseText + "\n" + "error: " + error);
+			}
 
+		});
+	}
+	
+	function productChoiceDelete() {
+		
+		var arrPdno = new Array();
+		
+		<c:forEach var="pvo" items="${cartList}" varStatus="status">
+			arrPdno.push('${pvo.pdno}');
+		</c:forEach>
+		
+		var para_pdnoes = arrPdno.join(","); // "1,1,1,1,2,3,4"
+		
+		var para_data = {"pdnoes":para_pdnoes,"userid_fk":'${sessionScope.loginuser.userid}'};
+		
+		$.ajax({
+			 url:"/TeamMVC/product/productChoiceDelete.neige", 
+	      	 type:"POST",
+	         data:para_data, 
+	         dataType:"JSON",
+	         success:function(){
+	            alert("success");
+	         },
+	         error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	         }
+
+		});
+		
+	}
+	
 </script>
 
 </head>
 <body>
 
 
-
 <div id="PaymentContainer">
+<c:if test="${not empty cartList}">
 		<%-- 로그인된 유저가 아닌 일반사용자가 장바구니를 클릭할 경우 --%>
 		<%-- <c:if test="${not empty sessionScope.loginuser}"> --%>
 			<div id="userInfo" class="widthController">
@@ -247,7 +631,6 @@
 			<div class="col-md-1" >삭제</div>
 		</div>
 		<!-- "장바구니 상품 목록" -->
-		<%-- <c:if test="${not empty orderList}">  --%>
 		<!-- 장바구니 DB 테이블에서 내가 선택한 상품 LIST DTO를 받아온다. 없을경우 하단의 메세지를 출력 -->
 		
 		<c:forEach var="pvo" items="${cartList}" varStatus="status">
@@ -261,7 +644,7 @@
 					
 					<!-- 장바구니 테이블에서 상품번호를 받기 -> 상품 테이블에 접근하여 상품의 이미지이름, 가격, 상세정보를 받아온다. -->
 					<li class="col-md-1">
-						<img src="<%=ctxPath%>/images/${pvo.pdimage1}" width="100px;" heigth="200px;">
+						<img src="<%=ctxPath%>/images/${pvo.pdimage1}" style="width: 100px; height: 100px; margin: 0 auto; ">
 					</li>
 					
 					<li class="col-md-5 notimg">
@@ -272,11 +655,12 @@
 						<input type="text" style="width: 100px;" name="p_price" id="p_price1" class="p_price" value="${pvo.price}" readonly="readonly">
 					</li>
 					<li class="col-md-1 notimg">
+					
 						<!-- "장바구니 수량 변경" -->
 						<div class="updown" style="display: inline">
 							<input type="text" class="amountCtrl" name="amountInput" size="2" maxlength="4" value="1"> 
-							<span><i class='fas fa-angle-up up' style='font-size: 24px; cursor: pointer;'></i></span> 
-							<span><i class='fas fa-angle-down down' style='font-size: 24px; cursor: pointer;'></i></span>
+							<span><i class='fa fa-angle-up up' style='font-size: 24px; cursor: pointer;'></i></span> 
+							<span><i class='fa fa-angle-down down' style='font-size: 24px; cursor: pointer;'></i></span>
 						</div>
 					</li>
 					
@@ -292,7 +676,7 @@
 					
 					<!-- 상품 개별 삭제버튼 -->
 					<li class="col-md-1 notimg">
-						<button type="button" class="btn btn-primary deleteOne" >삭제</button>
+						<button type="button" class="btn btn-primary deleteOne" onclick="productOneDelete('${pvo.pdno}')" >삭제</button>
 					</li>
 					
 					<!-- 상품번호를 받아와 .java로 전송시켜줄 변수를 만든다.
@@ -307,17 +691,16 @@
 		
 			<!-- "선택된 상품들 삭제 버튼" -->
 			<div class="widthController headBtn" align="right">
-				<button type="button" class="btn btn-primary" id="selectDelete">선택상품삭제</button>
+				<button type="button" class="btn btn-primary" id="selectDelete" onclick="productChoiceDelete()">선택상품삭제</button>
 				&nbsp;|&nbsp;
 			<!-- "장바구니 전체 상품 삭제 버튼" -->
-				<button type="button" class="btn btn-primary" id="allDelete">장바구니비우기</button>
+				<button type="button" class="btn btn-primary" id="allDelete" onclick="productAllDelete()">장바구니비우기</button>
 			</div>
 		</form>
 		
 			<!-- "장바구니 전체 합계 정보" -->
-			<div class="widthController" id="sum_p_num" align="right">상품갯수: <input type="number" readonly="readonly" id="totalamount" /> 개</div>
-			<div class="widthController" id="sum_p_price" align="right">합계금액: <input type="number" id="totalprice" readonly="readonly" /> 원</div>
-			
+				<div class="widthController sum_p_num" align="right">상품갯수: <input type="number" readonly="readonly" name="sumAmount" class="sumAmount" /> 개</div>
+				<div class="widthController sum_p_price" align="right">합계금액: <input type="number" readonly="readonly" name="sumPrice" class="sumPrice" /> 원</div>
 			<!-- 배송 정보 -->
 			<table class="widthController" id="addressInfoTbl">
 				<tbody>
@@ -384,9 +767,12 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>51500원</td>
-						<td>4300원</td>
-						<td>47200원</td>
+						<!-- 주문목록중 선택된 제품들만 가격을 더한 최종금액 -->
+						<td><input type="text" id="checkedSumPrice" style="text-align: center;" readonly="readonly"/>원</td>
+						<!-- 사용할 포인트를 입력받는 input -->
+						<td><input type="text" id="usePoint" style="text-align: center;" placeholder="사용하실 포인트 입력" />원 </td>
+						<!-- 주문목록중 선택된 제품들만 가격을 더한 최종금액에서 사용된 포인트 번호를 차감한 최종결재금액 -->
+						<td><input type="text" id="finalPrice" style="text-align: center;" readonly="readonly"/>원</td>
 					</tr>
 				</tbody>
 			</table>
@@ -408,7 +794,7 @@
 						<div class="owl-stage">
 							<c:forEach var="imgvo" items="${imgList}" varStatus="status">
 								<div class="owl-item">
-									<img src="<%=ctxPath%>/images/${imgvo.imgfilename}" style="width: 100%;">
+									<img src="<%=ctxPath%>/images/${imgvo.imgfilename}" style="width: 100%; cursor: pointer;">
 								</div>
 							</c:forEach>
 						</div>
@@ -416,12 +802,13 @@
 				</div>
 				<!-- Greatest Offer News End -->
 			</div>
-		<%-- </c:if> --%>
 	</form>
+	</c:if>
+	
+	<c:if test="${empty cartList}">
 	<!-- 장바구니 테이블이 비어있을 경우 -->
-	<c:if test="${empty orderList}">
 		<div style="border: 1px solid #E2E2E2; height:300px; margin-top: 0px; margin-bottom: 100px; display: table; vertical-align: middle; " class="widthController" id="nothingChoice">
-			<h3 style="opacity: 0.5; display: table-cell; vertical-align: middle;" >선택하신 상품이 존재하지 않습니다.</h3>
+			<h3 style="opacity: 0.5; display: table-cell; vertical-align: middle; margin-top:300px;" >선택하신 상품이 존재하지 않습니다.</h3>
 		</div>
 		
 		<div style="display: inline;">
@@ -442,7 +829,7 @@
 						<div class="owl-stage">
 							<c:forEach var="imgvo" items="${imgList}" varStatus="status">
 								<div class="owl-item">
-									<img src="<%=ctxPath%>/images/${imgvo.imgfilename}" style="width: 100%;">
+									<img src="<%=ctxPath%>/images/${imgvo.imgfilename}" style="width: 100%; cursor:pointer;">
 								</div>
 							</c:forEach>
 						</div>

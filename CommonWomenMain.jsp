@@ -68,7 +68,6 @@
    div.discription > ul > li {
    	  margin-bottom: 5px;
    }
-
    div.discription > ul > li > span {
    	  font-size: 10pt;
    } 
@@ -84,7 +83,6 @@
 
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
 		
 		// Top, Down 버튼 올렸을 때 CSS 지정
@@ -164,7 +162,6 @@
 	
 	
 	
-
 </script>
 
 
@@ -313,4 +310,3 @@
 </div>
 
 <%-- div contents --%>
-

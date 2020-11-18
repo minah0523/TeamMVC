@@ -83,10 +83,41 @@ $(document).ready(function() {
 		}			
 	}); // 아이디가 pdname인 것의 포커스를 잃어버렸을 경우(blur) 이벤트 끝-------------
 	
-	// 제품이미지1
-	
-	
+	// 제품이미지1(파일 선택 이벤트는 change 이벤트이다.)
+	$("input#pdimage1").change(function(){
+		
+		var pdimage1 = $(this).val();
+		if(pdimage1 == "") {
+			$(":input").prop("disabled",true); // 모든 input 태그 비활성화
+			$(this).prop("disabled", false);   // 자기자신 활성화			
+			
+			$(this).parent().parent().find(".error").show();
+		}
+		else{
+			$(this).parent().parent().find(".error").hide();
+			$(":input").prop("disabled", false);    // 모든 input태그 활성화
+			
+		}
+	});
+
 	// 제품이미지2
+	$("input#pdimage2").change(function(){
+		
+		var pdimage2 = $(this).val();
+		if(pdimage2 == "") {
+			$(":input").prop("disabled",true); // 모든 input 태그 비활성화
+			$(this).prop("disabled", false);   // 자기자신 활성화			
+			
+			$(this).parent().parent().find(".error").show();
+			return;
+		}
+		else{
+			$(this).parent().parent().find(".error").hide();
+			$(":input").prop("disabled", false);    // 모든 input태그 활성화
+			
+		}
+		
+	});	
 	
 	// 제품수량
 	$("input#pdqty").blur(function(){
@@ -187,11 +218,51 @@ $(document).ready(function() {
 		}			
 	});		
 	
-	// 성별
 	
+	// 색상
+	$("input#pcolor").blur(function(){
+		
+		var pcolor = $(this).val().trim(); 
+		
+		if(pcolor == "") {
+			// 값을 입력하지 않았거나 공백만 입력한 경우
+			$(":input").prop("disabled",true); // 모든 input 태그 비활성화
+			$(this).prop("disabled", false);   // 자기자신 활성화
+			
+			$(this).parent().find(".error").show(); // 자기자신에서 부모로 올라가서 error class를 찾아서 보여주자, this 위에 부모 : tr 태그
+			$(this).focus();
+		}
+		else {
+			// 공백이 아닌 글자를 입력했을 경우
+			$(this).parent().find(".error").hide(); // 에러메세지 숨기기
+			$(":input").prop("disabled", false);    // 모든 input태그 활성화
+		}	
+		
+		// pcolor = pcolor.split(",");
+	});		
 	
-	
-	
+	// 사이즈
+	$("input#psize").blur(function(){
+		
+		var psize = $(this).val().trim(); 
+		
+		if(psize == "") {
+			// 값을 입력하지 않았거나 공백만 입력한 경우
+			$(":input").prop("disabled",true); // 모든 input 태그 비활성화
+			$(this).prop("disabled", false);   // 자기자신 활성화
+			
+			$(this).parent().find(".error").show(); // 자기자신에서 부모로 올라가서 error class를 찾아서 보여주자, this 위에 부모 : tr 태그
+			$(this).focus();
+		}
+		else {
+			// 공백이 아닌 글자를 입력했을 경우
+			$(this).parent().find(".error").hide(); // 에러메세지 숨기기
+			$(":input").prop("disabled", false);    // 모든 input태그 활성화
+		}	
+		
+		// psize = psize.split(",");
+		
+	});		
 	
 	
 }); // end of $(document).ready()-------------------------
@@ -205,6 +276,36 @@ function goProductRegister() {
 		// 체크한 길이가 0 이라면 오류 메세지 출력
 		alert("성별을 선택해주세요!");
 		return;
+	}
+	
+	var psizes = $("input#psize").val();
+	psizes = psizes.split(",");
+	
+	var pcolors = $("input#pcolor").val();
+	pcolors = pcolors.split(",");
+	
+	if(psizes.length != pcolors.length ) {
+		// 색상의 배열 길이와 사이즈의 배열 길이가 같은 경우에만 form을 보내준다. 
+		alert("색상과 사이즈의 길이는 같아야 합니다. ");
+		return;
+	}
+	
+	// 필수 입력사항 모두 입력이 되어있는지 검사한다. // 
+	var bFlagRequiredInfo = false;
+	$(".requiredInfo").each(function(){ // 선택자 모두 반복
+		
+		var data = $(this).val();
+		if(data == "") { // data에 아무것도 안쓰여져있다면
+			bFlagRequiredInfo = true; // 한개라도 안쓰여져 있다면 flag를 true로 변경
+			alert("*표시된 필수입력사항은 모두 입력하셔야 합니다.");
+			return false; // 반복문 break
+		}
+	});	
+		
+	if(!bFlagRequiredInfo) { // bFlagRequiredInfo가 false 일때만 전송한다.
+		var frm = document.registerProductFrm;
+		frm.submit();
+		
 	}
 	
 }
@@ -221,7 +322,8 @@ function goReset() {
     
 <div class="row" id="divRegisterFrm">
    <div class="col-md-9" align="left" style = " margin-left: 20px; width:1200px;">
-   <form name="registerProductFrm" style ="margin-left: 50px;" 
+   <form name="registerProductFrm" style ="margin-left: 50px;"
+   		 action="<%= request.getContextPath()%>/product/productRegister.neige" 
    		 method="POST"                       
       	 enctype="multipart/form-data">   
    <table id="tblProductRegister">
@@ -263,9 +365,10 @@ function goReset() {
 	      <tr>
 	      	<td class = "titles" style="width: 20%;">제품이미지2&nbsp;<span class="star">*</span></td>
 	      	<td style="width: 80%; text-align: left;">
-	      		<span>
-	             	<input type="file" name="pdimage2" id="pdimage2" class="requiredInfo" /><span class="error">제품이미지는 필수입력 사항입니다.</span>
-	             </span>
+	      		
+	             	<input type="file" name="pdimage2" id="pdimage2" class="requiredInfo" />
+	             	<span class="error">제품이미지는 필수입력 사항입니다.</span>
+	             
 	        </td>	      	
 	      </tr>
 	      <tr>
@@ -306,7 +409,29 @@ function goReset() {
 	            <input type="radio" id="male" name="pdgender" value="1" /><label for="male" style="margin-left: 2%;">남자</label>
 	            <input type="radio" id="female" name="pdgender" value="2" style="margin-left: 10%;" /><label for="female" style="margin-left: 2%;">여자</label>
 	         </td>
-	      </tr>         
+	      </tr>
+	      <tr>
+	         <td class = "titles" style="width: 20%;">추가제품이미지&nbsp;</td>
+	         <td style="width: 80%; text-align: left;">
+	         	 <span>
+	             	<input type="file" name="plusPdimage" id="plusPdimage" class="requiredInfo" />
+	             </span>
+	         </td> 
+	      </tr>
+	      <tr>
+	         <td class = "titles" style="width: 20%;">색상&nbsp;<span class="star">*</span></td>
+	         <td style="width: 80%; text-align: left;">
+	             <input type="text" name="pcolor" id="pcolor" class="requiredInfo" placeholder="ex) brown, black..."/> 
+	             <span class="error">색상은 필수입력 사항입니다.</span>
+	         </td>
+	      </tr>
+	      <tr>
+	         <td class = "titles" style="width: 20%;">사이즈&nbsp;<span class="star">*</span></td>
+	         <td style="width: 80%; text-align: left;">
+	             <input type="text" name="psize" id="psize" class="requiredInfo" placeholder="ex) free, S, M... "/> 
+	             <span class="error">사이즈는 필수입력 사항입니다.</span>
+	         </td>
+	      </tr>		      	      	               
 	      <tr>
 	         <td colspan="2" style="line-height: 30px; border-bottom: hidden;">
 	            <span>
@@ -320,6 +445,7 @@ function goReset() {
    </form>
    </div>
 </div>
+
 
     </div>
   </div>

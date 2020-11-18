@@ -13,7 +13,7 @@ public class ProductInfoVO {
 	public ProductInfoVO() { }
 	
 	public ProductInfoVO(int pinfono, int pdno_fk, String pcolor, String psize) {
-		super();
+		
 		this.pinfono = pinfono;
 		this.pdno_fk = pdno_fk;
 		this.pcolor = pcolor;

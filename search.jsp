@@ -283,17 +283,16 @@
               <c:forEach var="pvo" items="${searchProductList}" varStatus="status" >
                <li id="box">
                   <div class = "col-md-3">
-                     
                      <%-- 이미지 onmouseover onmouseout --%>
                      <div class="slideshow-container">
-                        <div class="productImg">
+                        <div class="productImg" style="cursor:pointer">
                         <%-- <img src="기본 이미지 주소" onmouseover="this.src='마우스 오버 상태의 이미지 주소'" onmouseout="this.src='기본 이미지 주소'"> --%>
-                          <img src="<%= ctxPath%>/images/${pvo.pdimage1}" onmouseover="this.src='<%= ctxPath%>/images/${pvo.pdimage2}'" onmouseout="this.src='<%= ctxPath%>/images/${pvo.pdimage1}'">
+                          <img style="cursor:pointer" onclick="javascript:window.open('<%= ctxPath%>/notice/view.neige?pdno=${pvo.pdno}', '_self')" src="<%= ctxPath%>/images/${pvo.pdimage1}" onmouseover="this.src='<%= ctxPath%>/images/${pvo.pdimage2}'" onmouseout="this.src='<%= ctxPath%>/images/${pvo.pdimage1}'">
                         </div>
                  	 </div>
                      <div class = "discription">
                      <%-- 제품이름 --%>
-                     <div id="pname" style="color:#333; font-size:11.5pt; font-weight:bold ; line-height:170%">
+                     <div style="cursor:pointer; font-weight: bold;" onclick="javascript:window.open('<%= ctxPath%>/ProductDetail.neige?pdno=${pvo.pdno}', '_self')" id="pname" style="color:#333; font-size:11.5pt; font-weight:bold ; line-height:170%">
                          ${pvo.pdname}        
                      </div>
                      <div>
@@ -309,17 +308,17 @@
                         <c:forTokens var="item" items="${pvo.sizes}" delims=",">
                             ${item}
                         </c:forTokens>
-                     </div>
+                      </div>
                               <span style="font-weight: bold;">판매가 :  </span><c:if test="${pvo.price ne pvo.saleprice}"><span style="font-size:11px; text-decoration:line-through;">${pvo.price} </span></c:if><span>&nbsp;&nbsp;${pvo.saleprice}원</span>
                               <c:if test="${pvo.price ne pvo.saleprice}"><span class="badge badge-pill badge-warning" style="font-size: 8pt; background-color:lightcoral">SALE</span></c:if>
                               <c:if test="${pvo.price eq pvo.saleprice}"><span class="badge badge-pill badge-warning" style="font-size: 8pt; background-color:lightblue">NEW</span></c:if>
-                        </div>
+                       </div>
                   </div>
                </li>
               </c:forEach>
-      </ul>
-   </div>
-   <div>
+	      </ul>
+	   </div>
+	<div>
     	${pageBar}
     </div>    
 </div>
